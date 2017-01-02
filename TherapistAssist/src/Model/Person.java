@@ -8,6 +8,9 @@ package model;
  */
 public interface Person {
 
+    /** Checks whether p is of the same Class and with the same id as this object. */
+    boolean equals(Person p);
+
     int getId();
     String getName();
     PersonalInformation getPI();
