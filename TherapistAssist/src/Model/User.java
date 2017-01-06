@@ -1,7 +1,10 @@
 package model;
 
+import model.exceptions.IdAlreadyExistsException;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * User of the program (the therapist). Contains a list of Clients and Sessions.
@@ -12,46 +15,117 @@ import java.util.List;
 public class User implements Person {
 
     /** The User's unique identifier. */
-    private int id;
+    private int uid;
     /** The User's name. */
     private String name;
     /** The User's personal information. */
     private PersonalInformation pi;
+    /** The User's Archive. */
+    private Archive archive;
     /** The User's client list. */
     private List<Client> clients;
     /** The User's session list. */
     private List<Session> sessions;
+    /** The User's groups of clients. */
+    private List<Group> groups;
+    /** A counter that keeps track of the used Group IDs. */
+    private int gidCounter;
+    /** A counter that keeps track of the used Client IDs. */
+    private int cidCounter;
 
-    public User(int id, String name, PersonalInformation pi) {
-        this.id = id;
+    public User(int uid, String name, PersonalInformation pi) {
+        this.uid = uid;
         this.name = name;
         this.pi = pi;
+        this.archive = new Archive();
         this.clients = new ArrayList<>();
         this.sessions = new ArrayList<>();
+        this.groups = new ArrayList<>();
+        this.gidCounter = 0;
+        this.cidCounter = 0;
     }
 
-    public User(int id, String name) {
-        this(id, name, new PersonalInformation());
+    public User(int uid, String name) {
+        this(uid, name, new PersonalInformation());
     }
 
     /**
-     * Gives a list of all sessions a given client participated in. Returns an empty list if the client did not
+     * Creates a new Client with an automatically generated ID, a given name, and a given pi. An
+     * IdAlreadyExistsException() is thrown when the generated ID is already in use.
+     * @param name The new Client's name.
+     * @param pi The new Client's PersonalInformation.
+     */
+    public void addClient(String name, PersonalInformation pi) {
+        int cid = cidCounter++;
+        for (Client cl : clients) {
+            if (cl.getId() == cid) {
+                throw new IdAlreadyExistsException();
+            }
+        }
+        Client c = pi == null? new Client(cid, name) : new Client(cid, name, pi);
+        clients.add(c);
+    }
+
+    /**
+     * Archives a Client with the given Client ID.
+     * @param cid The Client ID of the Client to be archived.
+     * @return true if the client was archived successfully, false if the client is not in the
+     * client list.
+     */
+    public boolean archiveClient(int cid) {
+        for (Client c : clients) {
+            if (c.getId() == cid) {
+                archive.archiveClient(c);
+                clients.remove(c);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Creates a new group with an automatically generated ID. An IdAlreadyExistsException() is thrown
+     * when the newly generated ID is already in use.
+     */
+    public void addGroup() {
+        int gid = gidCounter++;
+        for (Group g : groups) {
+            if (g.getGid() == gid) {
+                throw new IdAlreadyExistsException();
+            }
+        }
+        Group g = new Group(gid);
+        groups.add(g);
+    }
+
+    /**
+     * Archives a Group with the given Group ID.
+     * @param gid The Group ID of the Group to be archived.
+     * @return true if the group was archived successfully, false if the group is not in the
+     * group list.
+     */
+    public boolean archiveGroup(int gid) {
+        for (Group g : groups) {
+            if (g.getGid() == gid) {
+                archive.archiveGroup(g);
+                groups.remove(g);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gives a list of all sessions a given client participated in. Returns an empty list if
+     * the client did not
      * participate in any session.
      * @param client The client that is to be checked.
-     * @return a list of sessions that the client participated in. An empty list if client did not participate in
+     * @return a list of sessions that the client participated in. An empty list if client
+     * did not participate in
      * any session.
      */
     public List<Session> getClientSessions(Client client) {
-        List<Session> sl = new ArrayList<>();
-        for (Session s : sessions) {
-            for (Client c : s.getParticipants()) {
-                if (client.equals(c)) {
-                    sl.add(s);
-                    break;
-                }
-            }
-        }
-        return sl;
+        return sessions.stream().filter(s -> s.isInSession(client)).collect(Collectors.toList());
     }
 
     public List<Client> getClients() {
@@ -62,14 +136,22 @@ public class User implements Person {
         return sessions;
     }
 
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public Archive getArchive() {
+        return archive;
+    }
+
     @Override
     public boolean equals(Person p) {
-        return p instanceof User && (p == this || p.getId() == id);
+        return p instanceof User && (p == this || p.getId() == uid);
     }
 
     @Override
     public int getId() {
-        return id;
+        return uid;
     }
 
     @Override

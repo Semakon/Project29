@@ -9,30 +9,31 @@ package model;
 public class Client implements Person {
 
     /** The Client's unique identifier. */
-    private int id;
+    private int cid;
     /** The Client's name. */
     private String name;
     /** The Client's personal information. */
     private PersonalInformation pi;
+    //TODO: add initials
 
-    public Client(int id, String name, PersonalInformation pi) {
-        this.id = id;
+    public Client(int cid, String name, PersonalInformation pi) {
+        this.cid = cid;
         this.name = name;
         this.pi = pi;
     }
 
-    public Client(int id, String name) {
-        this(id, name, new PersonalInformation());
+    public Client(int cid, String name) {
+        this(cid, name, new PersonalInformation());
     }
 
     @Override
     public boolean equals(Person p) {
-        return p instanceof Client && (p == this || p.getId() == id);
+        return p instanceof Client && (p == this || p.getId() == cid);
     }
 
     @Override
     public int getId() {
-        return id;
+        return cid;
     }
 
     @Override
