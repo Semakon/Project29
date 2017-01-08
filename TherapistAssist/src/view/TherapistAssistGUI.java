@@ -1,7 +1,7 @@
 package view;
 
-import model.Client;
-import model.PersonalInformation;
+import modelPackage.Client;
+import modelPackage.PersonalInformation;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,8 +1,8 @@
 package control;
 
-import model.Client;
-import model.PersonalInformation;
-import model.exceptions.IdAlreadyExistsException;
+import modelPackage.Client;
+import modelPackage.PersonalInformation;
+import modelPackage.exceptions.IdAlreadyExistsException;
 import view.ViewTest;
 
 import javax.swing.*;

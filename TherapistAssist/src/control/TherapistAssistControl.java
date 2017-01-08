@@ -1,9 +1,9 @@
 package control;
 
-import model.Client;
-import model.PersonalInformation;
-import model.TherapistAssist;
-import model.User;
+import modelPackage.Client;
+import modelPackage.PersonalInformation;
+import modelPackage.TherapistAssist;
+import modelPackage.User;
 import view.TherapistAssistGUI;
 
 import javax.swing.*;
