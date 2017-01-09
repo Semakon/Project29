@@ -641,9 +641,14 @@ public class TherapistAssistGUI extends Observable {
             nameTF.setText("");
             anamnesisTF.setText("");
             helpQuestionTF.setText("");
+
+            // Empty out the participants pane
             for (Component c : participantsPane.getComponents()) {
                 if (c instanceof JLabel) participantsPane.remove(c);
             }
+
+            // Clear added clients list
+            addedClients.clear();
         });
         cancelBtn.addActionListener(e -> {
             // Show the user profile card

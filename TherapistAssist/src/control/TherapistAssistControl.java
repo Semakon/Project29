@@ -114,7 +114,7 @@ public class TherapistAssistControl implements Observer {
      */
     private static void setUpTherapistAssist() {
         // Create and set up window.
-        JFrame frame = new JFrame("TestUserProfile");
+        JFrame frame = new JFrame("TherapistAssist");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create and set up content pane.
