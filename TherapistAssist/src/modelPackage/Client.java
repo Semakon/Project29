@@ -45,4 +45,9 @@ public class Client implements Person {
         return pi;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

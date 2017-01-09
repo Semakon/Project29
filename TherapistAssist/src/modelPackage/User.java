@@ -88,8 +88,9 @@ public class User implements Person {
     /**
      * Creates a new group with an automatically generated ID. An IdAlreadyExistsException() is thrown
      * when the newly generated ID is already in use.
+     * @return The added Group.
      */
-    public void addGroup() {
+    public Group addGroup() {
         int gid = gidCounter++;
         for (Group g : groups) {
             if (g.getGid() == gid) {
@@ -98,6 +99,7 @@ public class User implements Person {
         }
         Group g = new Group(gid);
         groups.add(g);
+        return g;
     }
 
     /**
@@ -128,6 +130,18 @@ public class User implements Person {
      */
     public List<Session> getClientSessions(Client client) {
         return sessions.stream().filter(s -> s.isInSession(client)).collect(Collectors.toList());
+    }
+
+    /**
+     * Searches for a client with cid as their Client ID.
+     * @param cid The Client ID.
+     * @return The client that has this Client ID or null if the client is not in the client list.
+     */
+    public Client getClientByCid(int cid) {
+        for (Client c : clients) {
+            if (c.getId() == cid) return c;
+        }
+        return null;
     }
 
     public List<Client> getClients() {

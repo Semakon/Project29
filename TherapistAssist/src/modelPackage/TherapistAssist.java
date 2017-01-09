@@ -106,21 +106,31 @@ public class TherapistAssist {
     /**
      * Adds a new Group to the current User.
      * @param currentUser Currently online User.
-     * @return true if the group was added successfully, false if the currentUser does not exist.
+     * @return the added group or null if the currentUser does not exist.
      */
-    public boolean addGroup(User currentUser) {
+    public Group addGroup(User currentUser) {
         for (User u : users) {
             if (currentUser.equals(u)) {
-                currentUser.addGroup();
-                return true;
+                return currentUser.addGroup();
             }
         }
-        return false;
+        return null;
     }
 
     public boolean archiveGroup(User currentUser, int gid) {
 
         return false;
+    }
+
+    /**
+     * Searches for a client with cid as their Client ID from the currentUser.
+     * @param cid The Client ID.
+     * @return The client that has this Client ID. null if the currentUser is not in the user list
+     * or if the client is not in the client list of the currentUser.
+     */
+    public Client getClientByCid(User currentUser, int cid) {
+        if (!users.contains(currentUser)) return null;
+        return currentUser.getClientByCid(cid);
     }
 
     public List<User> getUsers() {
