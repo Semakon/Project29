@@ -9,17 +9,27 @@ import java.util.List;
  * Author:  Martijn
  * Date:    4-1-2017
  */
-public class Group {
+public class Group implements SessionOwner {
 
     private int gid;
     private String groupName;
     private List<Client> participants;
     private String anamnesis;
     private String helpQuestion;
+    private List<Session> sessions;
 
     public Group(int gid) {
         this.gid = gid;
-        participants = new ArrayList<>();
+        this.participants = new ArrayList<>();
+        this.sessions = new ArrayList<>();
+    }
+
+    public boolean addSession(Session session) {
+        for (Session s : sessions) {
+            if (session.equals(s)) return false;
+        }
+        this.sessions.add(session);
+        return true;
     }
 
     /**
@@ -79,6 +89,10 @@ public class Group {
         this.groupName = groupName;
     }
 
+    public List<Client> getParticipants() {
+        return participants;
+    }
+
     public String getAnamnesis() {
         return anamnesis;
     }
@@ -93,6 +107,10 @@ public class Group {
 
     public void setHelpQuestion(String helpQuestion) {
         this.helpQuestion = helpQuestion;
+    }
+
+    public List<Session> getSessions() {
+        return sessions;
     }
 
 }
