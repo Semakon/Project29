@@ -26,6 +26,9 @@ public class TherapistAssistControl implements Observer {
         this.model.addUser("Agnes de Wit");
         this.user = model.getUsers().get(0);
 
+        // For test purposes
+        addTestClients();
+
         this.view = new TherapistAssistGUI(user.getName());
         view.addObserver(this);
     }
@@ -66,7 +69,7 @@ public class TherapistAssistControl implements Observer {
                     }
 
                     // Send newly created client to the view
-                    view.clientAdded(client);
+                    view.addClientToView(client);
                     return;
                 case addGroup:
                     // Create Group and add it to the database
@@ -92,7 +95,7 @@ public class TherapistAssistControl implements Observer {
                     }
 
                     // Send newly created group to the view
-                    view.groupAdded(group);
+                    view.addGroupToView(group);
                     return;
                 case logout:
                     // TODO: implement good logout protocol
@@ -104,8 +107,46 @@ public class TherapistAssistControl implements Observer {
         }
     }
 
+    /** TEMPORARY */
+    public User getUser() {
+        return user;
+    }
+
     public TherapistAssistGUI getView() {
         return view;
+    }
+
+    /**
+     * Adds a few clients and groups for testing purposes.
+     */
+    private void addTestClients() {
+        // Create client 'Bert'
+        PersonalInformation bertPi = new PersonalInformation();
+        bertPi.setInitials("B.Z.");
+        bertPi.setDateOfBirth("28-06-1970");
+        bertPi.setGender("Male");
+        bertPi.setHealthInsuranceNumber("381403850493");
+        bertPi.setAnamnesis("-");
+        bertPi.setHelpQuestion("Anger management");
+        Client bert = this.model.addClient(user, "Bert Zonneklaar", bertPi);
+
+        // Create client 'Paul'
+        PersonalInformation paulPi = new PersonalInformation();
+        paulPi.setInitials("P.J.");
+        paulPi.setDateOfBirth("14-04-1981");
+        paulPi.setGender("Male");
+        paulPi.setHealthInsuranceNumber("591578910295");
+        paulPi.setAnamnesis("-");
+        paulPi.setHelpQuestion("Anger management");
+        Client paul = this.model.addClient(user, "Paul de Jong", paulPi);
+
+        // Create group 'Group 1'
+        Group group1 = this.model.addGroup(user);
+        group1.setGroupName("Group 1");
+        group1.setAnamnesis("-");
+        group1.setHelpQuestion("Anger management");
+        group1.addClient(bert);
+        group1.addClient(paul);
     }
 
     /**
@@ -119,7 +160,8 @@ public class TherapistAssistControl implements Observer {
 
         // Create and set up content pane.
         TherapistAssistControl control = new TherapistAssistControl();
-        control.getView().buildGUI(frame.getContentPane());
+        User user = control.getUser();
+        control.getView().buildGUI(frame.getContentPane(), user.getClients(), user.getGroups());
 
         // Display the window
         frame.pack();

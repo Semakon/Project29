@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 
@@ -48,19 +49,19 @@ public class TherapistAssistGUI extends Observable {
      * Builds the user profile card for the GUI.
      * @param card The card on which the GUI is built.
      */
-    public void buildUserProfile(Container card) {
+    public void buildUserProfile(Container card, List<Client> clients, List<Group> groups) {
         card.setLayout(new FlowLayout());
         card.setBackground(Color.WHITE);
         card.setPreferredSize(new Dimension(1000, 800));
 
         // Initiate panes
-        JPanel topPane = new JPanel();
-        JPanel searchPane = new JPanel();
-        JPanel dataPane = new JPanel();
-        JPanel clientsPane = new JPanel();
-        JPanel clientsMenuPane = new JPanel();
-        JPanel groupsPane = new JPanel();
-        JPanel groupsMenuPane = new JPanel();
+        JPanel topPane = new JPanel(new FlowLayout());
+        JPanel searchPane = new JPanel(new FlowLayout());
+        JPanel dataPane = new JPanel(new GridLayout(2, 2));     // 2 rows, 2 columns
+        JPanel clientsPane = new JPanel(new GridLayout(8, 2));  // 8 rows, 2 columns
+        JPanel clientsMenuPane = new JPanel(new FlowLayout());
+        JPanel groupsPane = new JPanel(new GridLayout(8, 2));   // 8 rows, 2 columns
+        JPanel groupsMenuPane = new JPanel(new FlowLayout());
 
         // Set clients and groups pane to be globally accessible
         this.clientsPane = clientsPane;
@@ -117,15 +118,6 @@ public class TherapistAssistGUI extends Observable {
             cl.show(cards, ADD_GROUP_CARD);
         });
 
-        // Set pane layouts
-        topPane.setLayout(new FlowLayout());
-        searchPane.setLayout(new FlowLayout());
-        dataPane.setLayout(new GridLayout(2, 2));       // 2 rows, 2 columns
-        clientsMenuPane.setLayout(new FlowLayout());
-        groupsMenuPane.setLayout(new FlowLayout());
-        clientsPane.setLayout(new GridLayout(8, 2));    // 8 rows, 2 columns
-        groupsPane.setLayout(new GridLayout(8, 2));     // 8 rows, 2 columns
-
         // Add components to their respective panes
         topPane.add(userNameLbl, BorderLayout.WEST);
         topPane.add(optionsBtn, BorderLayout.EAST);
@@ -137,12 +129,18 @@ public class TherapistAssistGUI extends Observable {
         clientsMenuPane.add(clientsLbl);
         clientsMenuPane.add(addClientBtn);
 
-        //TODO: add data from clients to clients pane
+        // Add data from clients to clients pane
+        for (Client client : clients) {
+            addClientToView(client, true);
+        }
 
         groupsMenuPane.add(groupsLbl);
         groupsMenuPane.add(addGroupBtn);
 
-        //TODO: add data from groups to groups pane
+        // Add data from groups to groups pane
+        for (Group group : groups) {
+            addGroupToView(group, true);
+        }
 
         // Add panes to data pane
         dataPane.add(clientsMenuPane);
@@ -159,8 +157,7 @@ public class TherapistAssistGUI extends Observable {
     /**
      * Builds the sessions overview card for the GUI.
      * @param card The card on which the GUI is built.
-     * @param sessionOwner The sessions belong to this group or client. Only a Client or Group
-     *                     should be given.
+     * @param sessionOwner The sessions belong to this group or client.
      */
     public void buildSessionsOverviewCard(Container card, SessionOwner sessionOwner) {
         // Get the amount of rows needed to display sessions
@@ -193,14 +190,14 @@ public class TherapistAssistGUI extends Observable {
         // Set pane styles
         participantsPane.setPreferredSize(new Dimension(250, 800));
         participantsPane.setBackground(Color.LIGHT_GRAY);
-        dataPane.setPreferredSize(new Dimension(720, 800));
+        dataPane.setPreferredSize(new Dimension(740, 800));
         dataPane.setBackground(Color.LIGHT_GRAY);
-        topPane.setPreferredSize(new Dimension(720, 50));
+        topPane.setPreferredSize(new Dimension(740, 50));
         topPane.setBackground(Color.LIGHT_GRAY);
 
-        sessionsMenuPane.setPreferredSize(new Dimension(720, 50));
+        sessionsMenuPane.setPreferredSize(new Dimension(740, 50));
         sessionsMenuPane.setBackground(Color.LIGHT_GRAY);
-        sessionsPane.setPreferredSize(new Dimension(720, 700));
+        sessionsPane.setPreferredSize(new Dimension(740, 700));
         sessionsPane.setBackground(Color.LIGHT_GRAY);
 
         // Create labels
@@ -223,6 +220,7 @@ public class TherapistAssistGUI extends Observable {
         });
         newSessionBtn.addActionListener(e -> {
             //TODO: add "Add session" functionality
+
         });
         backBtn.addActionListener(e -> {
             // Show the user profile card
@@ -322,9 +320,143 @@ public class TherapistAssistGUI extends Observable {
     /**
      * Builds the session card for the GUI.
      * @param card The card on which the GUI is built.
+     * @param session The session this card represents.
      */
-    public void buildSessionCard(Container card) {
+    public void buildSessionCard(Container card, Session session) {
+        SessionOwner sessionOwner = session.getOwner();
+        // Get the amount of participants to display in the participants pane
+        int x = 3;
+        if (sessionOwner instanceof Client) {
+            x++;
+        } else if (sessionOwner instanceof Group) {
+            Group group = (Group) sessionOwner;
+            x += group.getParticipants().size();
+        } else {
+            // The sessionOwner should be an instance of either Group or Client
+            errorMessage("Session owner should be Group or Client object.");
+        }
 
+        card.setLayout(new FlowLayout());
+        card.setBackground(Color.WHITE);
+        card.setPreferredSize(new Dimension(1000, 800));
+
+        // Initiate panes
+        JPanel participantsPane = new JPanel(new GridLayout(x, 1)); // x rows, 1 column
+        JPanel dataPane = new JPanel(new FlowLayout());
+        JPanel topPane = new JPanel(new FlowLayout());
+        JPanel sessionMenuPane = new JPanel(new FlowLayout());
+        JPanel sessionPane = new JPanel(new FlowLayout());
+
+        JPanel graphPane = new JPanel();
+        JPanel videoPane = new JPanel();
+        JPanel notesPane = new JPanel();
+
+        // Set pane styles
+        participantsPane.setPreferredSize(new Dimension(250, 800));
+        participantsPane.setBackground(Color.LIGHT_GRAY);
+        dataPane.setPreferredSize(new Dimension(740, 800));
+        dataPane.setBackground(Color.LIGHT_GRAY);
+        topPane.setPreferredSize(new Dimension(740, 50));
+        topPane.setBackground(Color.LIGHT_GRAY);
+
+        sessionMenuPane.setPreferredSize(new Dimension(740, 50));
+        sessionMenuPane.setBackground(Color.LIGHT_GRAY);
+        sessionPane.setPreferredSize(new Dimension(740, 700));
+        sessionPane.setBackground(Color.LIGHT_GRAY);
+
+        graphPane.setPreferredSize(new Dimension(740, 380));
+        graphPane.setBackground(Color.GRAY);
+        videoPane.setPreferredSize(new Dimension(365, 310));
+        videoPane.setBackground(Color.GRAY);
+        notesPane.setPreferredSize(new Dimension(365, 310));
+        notesPane.setBackground(Color.GRAY);
+
+        // Create labels
+        JLabel userNameLbl = new JLabel(this.userName);
+        JLabel sessionNameLbl = new JLabel("Session " + session.getId()); //TODO: change session name
+        JLabel sessionDateLbl = new JLabel(session.getDate());
+
+        // Create buttons
+        JButton optionsBtn = new JButton("Options");
+        JButton logoutBtn = new JButton("Logout");
+        JButton saveBtn = new JButton("Save");
+        JButton backBtn = new JButton("Back");
+
+        // Button actions
+        optionsBtn.addActionListener(e -> JOptionPane.showMessageDialog(null, "Options dialog."));
+        logoutBtn.addActionListener(e -> {
+            int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout?");
+            if (response == JOptionPane.OK_OPTION) {
+                logout();
+            }
+        });
+        saveBtn.addActionListener(e -> {
+            // TODO: save session
+        });
+        backBtn.addActionListener(e -> {
+            // Return to session owner's session overview without saving
+            CardLayout cl = (CardLayout)cards.getLayout();
+            if (sessionOwner instanceof Client) {
+                cl.show(cards, CLIENT_SESSIONS_CARD + ((Client)sessionOwner).getId());
+            } else if (sessionOwner instanceof Group) {
+                cl.show(cards, GROUP_SESSIONS_CARD + ((Group)sessionOwner).getGid());
+            } else {
+                // The sessionOwner should be an instance of either Group or Client
+                errorMessage("Session owner should be Group or Client object.");
+                cl.show(cards, USER_PROFILE_CARD);
+            }
+        });
+
+        // Add components to their respective panes
+        topPane.add(userNameLbl, BorderLayout.WEST);
+        topPane.add(optionsBtn, BorderLayout.EAST);
+        topPane.add(logoutBtn, BorderLayout.EAST);
+
+        sessionMenuPane.add(sessionNameLbl);
+        sessionMenuPane.add(sessionDateLbl);
+        sessionMenuPane.add(saveBtn);
+
+        // TODO: add correct functions to graph-, video-, and notes pane
+        sessionPane.add(graphPane);
+        sessionPane.add(videoPane);
+        sessionPane.add(notesPane);
+
+        if (sessionOwner instanceof Client) {
+            // Cast session owner to client object
+            Client client = (Client)sessionOwner;
+
+            // Add labels to participants pane
+            JLabel clientNameLbl = new JLabel(client.getName());
+            JLabel clientBirthDateLbl = new JLabel(client.getPI().getDateOfBirth());
+
+            participantsPane.add(clientNameLbl);
+            participantsPane.add(clientBirthDateLbl);
+        } else if (sessionOwner instanceof Group) {
+            // Cast session owner to group object
+            Group group = (Group)sessionOwner;
+
+            // Add name label to participants pane
+            JLabel groupNameLbl = new JLabel(group.getGroupName());
+            participantsPane.add(groupNameLbl);
+
+            // Add participants' names to participants pane
+            for (Client c : group.getParticipants()) {
+                JLabel pLbl = new JLabel(c.getName());
+                participantsPane.add(pLbl);
+            }
+        } else {
+            // The sessionOwner should be an instance of either Group or Client
+            errorMessage("Session owner should be Group or Client object.");
+        }
+
+        // Add panes to data pane
+        dataPane.add(topPane);
+        dataPane.add(sessionMenuPane);
+        dataPane.add(sessionPane);
+
+        // Add panes to card
+        card.add(participantsPane);
+        card.add(dataPane);
     }
 
     /**
@@ -761,7 +893,6 @@ public class TherapistAssistGUI extends Observable {
         List<Client> addedClients = new ArrayList<>();
         for (Client c : clients) {
             addableClients.addItem(c);
-            addedClients.add(c);
         }
 
         // Create buttons
@@ -800,7 +931,9 @@ public class TherapistAssistGUI extends Observable {
             data.add(nameTF.getText());
             data.add(anamnesisTF.getText());
             data.add(helpQuestionTF.getText());
-            //TODO: add participants to data using their CIDs
+            for (int i = 0; i < this.addableClients.getItemCount(); i++) {
+                data.add(this.addableClients.getItemAt(i).getId() + "");
+            }
 
             // Notify observers of new group
             groupData = data;
@@ -895,27 +1028,32 @@ public class TherapistAssistGUI extends Observable {
      * in the controller.
      * @param pane The content pane of the main JFrame of the GUI.
      */
-    public void buildGUI(Container pane) {
+    public void buildGUI(Container pane, List<Client> clients, List<Group> groups) {
         // Initialise static cards
         JPanel userProfileCard = new JPanel();
         JPanel optionsCard = new JPanel();
         JPanel addClientCard = new JPanel();
         JPanel addGroupCard = new JPanel();
 
+        // Create the cards
+        this.cards = new JPanel(new CardLayout());
+
         // Build the cards
-        buildUserProfile(userProfileCard);
+        buildUserProfile(userProfileCard, clients, groups);
         buildOptionsCard(optionsCard);
         buildAddGroupCard(addGroupCard);
         buildAddClientCard(addClientCard);
 
         // Add the cards to the card layout
-        this.cards = new JPanel(new CardLayout());
         this.cards.add(userProfileCard, USER_PROFILE_CARD);
         this.cards.add(optionsCard, OPTIONS_CARD);
         this.cards.add(addClientCard, ADD_CLIENT_CARD);
         this.cards.add(addGroupCard, ADD_GROUP_CARD);
 
         pane.add(cards);
+
+        CardLayout cl = (CardLayout)cards.getLayout();
+        cl.show(cards, USER_PROFILE_CARD);
     }
 
     /**
@@ -923,7 +1061,17 @@ public class TherapistAssistGUI extends Observable {
      * client has been added.
      * @param client The newly added client.
      */
-    public void clientAdded(Client client) {
+    public void addClientToView(Client client) {
+        addClientToView(client, false);
+    }
+
+    /**
+     * Called by the control class to let this view class rebuild the user profile card when a new
+     * client has been added.
+     * @param client The newly added client.
+     * @param init Shows whether this is the can initial call to this method.
+     */
+    public void addClientToView(Client client, boolean init) {
         int cid = client.getId();
         // Add client to clients list
         this.clients.add(client);
@@ -952,18 +1100,22 @@ public class TherapistAssistGUI extends Observable {
             }
         });
 
-        // Add the client to the combo box in
-        this.addableClients.addItem(client);
+        // If this is called because the user clicked on "Add Client"
+        if (!init) {
+            // Add the client to the combo box in
+            this.addableClients.addItem(client);
 
-        // Repaint clientsPane and participantsPane
-        this.clientsPane.revalidate();
-        this.clientsPane.repaint();
-        this.participantsPane.revalidate();
-        this.participantsPane.repaint();
+            // Repaint clientsPane and participantsPane
+            this.clientsPane.revalidate();
+            this.clientsPane.repaint();
+            this.participantsPane.revalidate();
+            this.participantsPane.repaint();
 
-        // Show user profile card
-        CardLayout cl = (CardLayout)(cards.getLayout());
-        cl.show(cards, USER_PROFILE_CARD);
+            // Show user profile card
+            CardLayout cl = (CardLayout) (cards.getLayout());
+            cl.show(cards, USER_PROFILE_CARD);
+        }
+
     }
 
     /**
@@ -971,7 +1123,17 @@ public class TherapistAssistGUI extends Observable {
      * group has been added.
      * @param group The newly added Group.
      */
-    public void groupAdded(Group group) {
+    public void addGroupToView(Group group) {
+        addGroupToView(group, false);
+    }
+
+    /**
+     * Called by the control class to let this view class rebuild the user profile card when a new
+     * group has been added.
+     * @param group The newly added Group.
+     * @param init Shows whether this is the can initial call to this method.
+     */
+    public void addGroupToView(Group group, boolean init) {
         int gid = group.getGid();
         // Add group to group list
         groups.add(group);
@@ -1000,13 +1162,24 @@ public class TherapistAssistGUI extends Observable {
             }
         });
 
-        // Repaint groupsPane
-        groupsPane.revalidate();
-        groupsPane.repaint();
+        // If this is called because the user clicked on "Add Client"
+        if (!init) {
+            // Repaint groupsPane
+            groupsPane.revalidate();
+            groupsPane.repaint();
 
-        // Show user profile card
-        CardLayout cl = (CardLayout)(cards.getLayout());
-        cl.show(cards, USER_PROFILE_CARD);
+            // Show user profile card
+            CardLayout cl = (CardLayout) (cards.getLayout());
+            cl.show(cards, USER_PROFILE_CARD);
+        }
+    }
+
+    public void addSessionToView(Session session) {
+        addSessionToView(session, false);
+    }
+
+    public void addSessionToView(Session session, boolean init) {
+
     }
 
     /** Initiates the logout protocol. */

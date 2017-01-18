@@ -1,5 +1,9 @@
 package modelPackage;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * A therapy session. Contains the User who runs the session and the participating group.
  *
@@ -21,11 +25,14 @@ public class Session {
     /** The session's graph. */
     private LineGraph graph;
 
-    public Session(int id, User therapist, String date, SessionOwner sessionOwner) {
+    public Session(int id, User therapist, SessionOwner sessionOwner) {
         this.id = id;
         this. therapist = therapist;
-        this.date = date;
         this.owner = sessionOwner;
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date date = new Date();
+        this.date = dateFormat.format(date);
     }
 
     public boolean isInSession(Client client) {
