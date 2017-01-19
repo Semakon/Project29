@@ -39,8 +39,8 @@ public class Client implements Person, SessionOwner {
     }
 
     @Override
-    public boolean equals(Person p) {
-        return p instanceof Client && (p == this || p.getId() == cid);
+    public boolean equals(Object o) {
+        return o instanceof Client && (o == this || ((Client)o).getId() == cid);
     }
 
     @Override

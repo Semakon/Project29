@@ -19,12 +19,15 @@ public class TherapistAssist {
     private List<User> users;
     /** User ID Counter; for generating new User IDs. */
     private int uidCounter;
+    /** Session ID counter; for generating new Session IDs. */
+    private int sidCounter;
     /** Map of removed User IDs to their respective archives. */
     private Map<Integer, Archive> removedUsersArchives;
 
     public TherapistAssist() {
         this.users = new ArrayList<>();
         uidCounter = 0;
+        sidCounter = 0;
         removedUsersArchives = new HashMap<>();
     }
 
@@ -120,6 +123,15 @@ public class TherapistAssist {
     public boolean archiveGroup(User currentUser, int gid) {
 
         return false;
+    }
+
+    public Session startSession(User currentUser, SessionOwner sessionOwner) {
+        for (User u : users) {
+            if (currentUser.equals(u)) {
+                return u.startSession(sessionOwner);
+            }
+        }
+        return null;
     }
 
     /**

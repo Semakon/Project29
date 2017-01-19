@@ -9,5 +9,6 @@ import java.util.List;
 public interface SessionOwner {
 
     List<Session> getSessions();
+    boolean equals(Object o);
 
 }

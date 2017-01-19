@@ -1,15 +1,15 @@
 package view;
 
 import modelPackage.*;
+import org.jfree.chart.ChartPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Observable;
+import java.util.stream.Collectors;
 
 /**
  * Author:  Martijn
@@ -19,9 +19,12 @@ public class TherapistAssistGUI extends Observable {
 
     private List<String> clientData;
     private List<String> groupData;
+    private SessionOwner currentOwner;
     private JPanel cards;
     private JPanel clientsPane;
     private JPanel groupsPane;
+    private Map<Group, JPanel> participantsPanes;
+    private Map<SessionOwner, JPanel> sessionPanes;
     private JPanel participantsPane;
     private JComboBox<Client> addableClients;
     private String userName;
@@ -33,16 +36,22 @@ public class TherapistAssistGUI extends Observable {
     public static final String OPTIONS_CARD = "OptionsCard";
     public static final String ADD_CLIENT_CARD = "AddClientCard";
     public static final String ADD_GROUP_CARD = "AddGroupCard";
-    /** 'Dynamic' Card names */
+    /** 'Dynamic' Card names
+     *  Profile cards*/
     public static final String CLIENT_PROFILE_CARD = "ClientProfileCard";
     public static final String GROUP_PROFILE_CARD = "GroupProfileCard";
-    public static final String CLIENT_SESSIONS_CARD = "ClientSessionsCard";
-    public static final String GROUP_SESSIONS_CARD = "GroupSessionsCard";
+    /** Session overview cards */
+    public static final String CLIENT_SESSIONS_OVERVIEW_CARD = "ClientSessionsOverviewCard";
+    public static final String GROUP_SESSIONS_OVERVIEW_CARD = "GroupSessionsOverviewCard";
+    /** Single session cards */
+    public static final String CLIENT_SESSION_CARD = "ClientSessionCard";
+    public static final String GROUP_SESSION_CARD = "GroupSessionCard";
 
     public TherapistAssistGUI(String username) {
         this.userName = username;
         this.clients = new ArrayList<>();
         this.groups = new ArrayList<>();
+        this.sessionPanes = new HashMap<>();
     }
 
     /**
@@ -187,6 +196,10 @@ public class TherapistAssistGUI extends Observable {
         //TODO: change sessionsPane to JScrollPane to show all content
         JPanel sessionsPane = new JPanel(new GridLayout(x, 2)); // x rows, 2 columns
 
+        // Add the session pane to the session panes map so it can be used to change the overview
+        // outside of this method
+        sessionPanes.put(sessionOwner, sessionsPane);
+
         // Set pane styles
         participantsPane.setPreferredSize(new Dimension(250, 800));
         participantsPane.setBackground(Color.LIGHT_GRAY);
@@ -219,8 +232,12 @@ public class TherapistAssistGUI extends Observable {
             }
         });
         newSessionBtn.addActionListener(e -> {
-            //TODO: add "Add session" functionality
+            // Set the current owner of this session to the session owner
+            this.currentOwner = sessionOwner;
 
+            // notify observers (control)
+            setChanged();
+            notifyObservers(GuiAction.addSession);
         });
         backBtn.addActionListener(e -> {
             // Show the user profile card
@@ -379,6 +396,7 @@ public class TherapistAssistGUI extends Observable {
         // Create buttons
         JButton optionsBtn = new JButton("Options");
         JButton logoutBtn = new JButton("Logout");
+        JButton startBtn = new JButton("Start");
         JButton saveBtn = new JButton("Save");
         JButton backBtn = new JButton("Back");
 
@@ -390,16 +408,19 @@ public class TherapistAssistGUI extends Observable {
                 logout();
             }
         });
+        startBtn.addActionListener(e -> {
+            //TODO: start receiving graph data and keep updating graph (threads)
+        });
         saveBtn.addActionListener(e -> {
-            // TODO: save session
+            // TODO: save graph data and stop session
         });
         backBtn.addActionListener(e -> {
             // Return to session owner's session overview without saving
             CardLayout cl = (CardLayout)cards.getLayout();
             if (sessionOwner instanceof Client) {
-                cl.show(cards, CLIENT_SESSIONS_CARD + ((Client)sessionOwner).getId());
+                cl.show(cards, CLIENT_SESSIONS_OVERVIEW_CARD + ((Client)sessionOwner).getId());
             } else if (sessionOwner instanceof Group) {
-                cl.show(cards, GROUP_SESSIONS_CARD + ((Group)sessionOwner).getGid());
+                cl.show(cards, GROUP_SESSIONS_OVERVIEW_CARD + ((Group)sessionOwner).getGid());
             } else {
                 // The sessionOwner should be an instance of either Group or Client
                 errorMessage("Session owner should be Group or Client object.");
@@ -414,9 +435,12 @@ public class TherapistAssistGUI extends Observable {
 
         sessionMenuPane.add(sessionNameLbl);
         sessionMenuPane.add(sessionDateLbl);
+        sessionMenuPane.add(startBtn);
         sessionMenuPane.add(saveBtn);
 
         // TODO: add correct functions to graph-, video-, and notes pane
+        graphPane.add(session.getGraphData().buildLineGraphPanel(session.getName()));
+
         sessionPane.add(graphPane);
         sessionPane.add(videoPane);
         sessionPane.add(notesPane);
@@ -449,6 +473,9 @@ public class TherapistAssistGUI extends Observable {
             errorMessage("Session owner should be Group or Client object.");
         }
 
+        // Finally add back button to participants pane
+        participantsPane.add(backBtn);
+
         // Add panes to data pane
         dataPane.add(topPane);
         dataPane.add(sessionMenuPane);
@@ -475,7 +502,6 @@ public class TherapistAssistGUI extends Observable {
         JPanel groupsPane = new JPanel();
         JPanel groupsMenuPane = new JPanel();
         JPanel participantsPane = new JPanel();
-        JPanel sessionsPane = new JPanel();
 
         // Set pane styles
         topPane.setPreferredSize(new Dimension(1000, 50));
@@ -496,7 +522,6 @@ public class TherapistAssistGUI extends Observable {
         JLabel participantsLbl = new JLabel("Participants:");
         JLabel anamnesisLbl = new JLabel("Anamnesis:");
         JLabel helpQuestionLbl = new JLabel("Help question:");
-        JLabel sessionsLbl = new JLabel("Sessions:");
 
         // Create buttons
         JButton optionsBtn = new JButton("Options");
@@ -528,13 +553,13 @@ public class TherapistAssistGUI extends Observable {
         backBtn.addActionListener(e -> {
             // Show the user profile card
             CardLayout cl = (CardLayout) (cards.getLayout());
-            cl.show(cards, GROUP_SESSIONS_CARD + group.getGid());
+            cl.show(cards, GROUP_SESSIONS_OVERVIEW_CARD + group.getGid());
         });
 
         // Set pane layouts
         topPane.setLayout(new FlowLayout());
         groupsMenuPane.setLayout(new FlowLayout());
-        groupsPane.setLayout(new GridLayout(6, 2));    // 6 rows, 2 columns
+        groupsPane.setLayout(new GridLayout(5, 2));    // 5 rows, 2 columns
 
         // Add components to their respective panes
         topPane.add(userNameLbl, BorderLayout.WEST);
@@ -545,9 +570,9 @@ public class TherapistAssistGUI extends Observable {
         groupsMenuPane.add(saveBtn);
         groupsMenuPane.add(archiveGroupBtn);
 
-        //TODO: add participants to participantsPane
-
-        //TODO: add sessions to sessionsPane
+        for (Client c : group.getParticipants()) {
+            participantsPane.add(new JLabel(c.getName()));
+        }
 
         groupsPane.add(nameLbl);
         groupsPane.add(nameTF);
@@ -557,8 +582,6 @@ public class TherapistAssistGUI extends Observable {
         groupsPane.add(anamnesisTF);
         groupsPane.add(helpQuestionLbl);
         groupsPane.add(helpQuestionTF);
-        groupsPane.add(sessionsLbl);
-        groupsPane.add(sessionsPane);
         groupsPane.add(backBtn);
 
         // Add panes to data pane
@@ -653,7 +676,7 @@ public class TherapistAssistGUI extends Observable {
 
             // Show the user profile card
             CardLayout cl = (CardLayout)(cards.getLayout());
-            cl.show(cards, CLIENT_SESSIONS_CARD + client.getId());
+            cl.show(cards, CLIENT_SESSIONS_OVERVIEW_CARD + client.getId());
         });
 
         // Set pane layouts
@@ -928,12 +951,15 @@ public class TherapistAssistGUI extends Observable {
 
             // Put data in a list
             List<String> data = new ArrayList<>();
+
+            // Group information
             data.add(nameTF.getText());
             data.add(anamnesisTF.getText());
             data.add(helpQuestionTF.getText());
-            for (int i = 0; i < this.addableClients.getItemCount(); i++) {
-                data.add(this.addableClients.getItemAt(i).getId() + "");
-            }
+
+            // IDs of clients
+            data.addAll(addedClients.stream().map(addedClient ->
+                    addedClient.getId() + "").collect(Collectors.toList()));
 
             // Notify observers of new group
             groupData = data;
@@ -1084,7 +1110,7 @@ public class TherapistAssistGUI extends Observable {
         // Create new card for new sessions view
         JPanel newSessionsClient = new JPanel();
         buildSessionsOverviewCard(newSessionsClient, client);
-        this.cards.add(newSessionsClient, CLIENT_SESSIONS_CARD + cid);
+        this.cards.add(newSessionsClient, CLIENT_SESSIONS_OVERVIEW_CARD + cid);
 
         // Create new label
         JLabel lbl = new JLabel(client.getPI().getInitials());
@@ -1096,7 +1122,7 @@ public class TherapistAssistGUI extends Observable {
             public void mouseClicked(MouseEvent e) {
                 // To client sessions
                 CardLayout cl = (CardLayout) (cards.getLayout());
-                cl.show(cards, CLIENT_SESSIONS_CARD + cid);
+                cl.show(cards, CLIENT_SESSIONS_OVERVIEW_CARD + cid);
             }
         });
 
@@ -1146,7 +1172,7 @@ public class TherapistAssistGUI extends Observable {
         // Create new card for the new sessions view
         JPanel newSessionsGroup = new JPanel();
         buildSessionsOverviewCard(newSessionsGroup, group);
-        cards.add(newSessionsGroup, GROUP_SESSIONS_CARD + gid);
+        cards.add(newSessionsGroup, GROUP_SESSIONS_OVERVIEW_CARD + gid);
 
         // Create new label
         JLabel lbl = new JLabel(group.getGroupName());
@@ -1158,7 +1184,7 @@ public class TherapistAssistGUI extends Observable {
             public void mouseClicked(MouseEvent e) {
                 // To group sessions
                 CardLayout cl = (CardLayout) (cards.getLayout());
-                cl.show(cards, GROUP_SESSIONS_CARD + gid);
+                cl.show(cards, GROUP_SESSIONS_OVERVIEW_CARD + gid);
             }
         });
 
@@ -1179,6 +1205,66 @@ public class TherapistAssistGUI extends Observable {
     }
 
     public void addSessionToView(Session session, boolean init) {
+        SessionOwner sessionOwner = session.getOwner();
+        int id = session.getId();
+
+        // Define card identifier string
+        String cardId = "";
+        if (sessionOwner instanceof Client) {
+            cardId = CLIENT_SESSION_CARD;
+        } else if (sessionOwner instanceof Group) {
+            cardId = GROUP_SESSION_CARD;
+        } else {
+            // TODO: error
+        }
+
+        // Create new card for the new session view
+        JPanel newSession = new JPanel();
+        buildSessionCard(newSession, session);
+        cards.add(newSession, cardId + id);
+
+        // Create new label and graph pane
+        JLabel lbl = new JLabel(session.getName());
+
+        // *** It is assumed the graph already contains data at this point. ***
+        ChartPanel graph = session.getGraphData().buildLineGraphPanel(session.getName());
+
+        lbl.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // To the session view
+                CardLayout cl = (CardLayout) (cards.getLayout());
+
+                // Define card identifier string
+                String cardId = "";
+                if (sessionOwner instanceof Client) {
+                    cardId = CLIENT_SESSION_CARD;
+                } else if (sessionOwner instanceof Group) {
+                    cardId = GROUP_SESSION_CARD;
+                } else {
+                    // TODO: error
+                }
+
+                cl.show(cards, cardId + id);
+            }
+        });
+
+        // Add label and graph to the session pane of the session owner
+        //TODO: only add label and graph after saving session with the "Save" button in the session view.
+        for (SessionOwner so : sessionPanes.keySet()) {
+            if (sessionOwner.equals(so)) {
+                sessionPanes.get(so).add(lbl);
+                sessionPanes.get(so).add(graph);
+                break;
+            }
+        }
+
+        // If this is called because the user clicked on "Start session"
+        if (!init) {
+            // Show the newly created session
+            CardLayout cl = (CardLayout) cards.getLayout();
+            cl.show(cards, cardId + id);
+        }
 
     }
 
@@ -1205,4 +1291,7 @@ public class TherapistAssistGUI extends Observable {
         return groupData;
     }
 
+    public SessionOwner getCurrentOwner() {
+        return currentOwner;
+    }
 }

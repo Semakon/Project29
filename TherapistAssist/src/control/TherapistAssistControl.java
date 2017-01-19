@@ -97,6 +97,16 @@ public class TherapistAssistControl implements Observer {
                     // Send newly created group to the view
                     view.addGroupToView(group);
                     return;
+                case addSession:
+                    // Create SessionOwner and start a new session
+                    SessionOwner sessionOwner = view.getCurrentOwner();
+                    Session session = model.startSession(user, sessionOwner);
+
+                    // TODO: add graph data to newly created session in real time (threads)
+
+                    // Send newly created session to the view
+                    view.addSessionToView(session);
+                    return;
                 case logout:
                     // TODO: implement good logout protocol
                     System.exit(0);

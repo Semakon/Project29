@@ -73,8 +73,9 @@ public class Group implements SessionOwner {
         return false;
     }
 
-    public boolean equals(Group group) {
-        return group == this || group.getGid() == gid;
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Group && (o == this || ((Group) o).getGid() == gid);
     }
 
     public int getGid() {

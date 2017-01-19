@@ -14,6 +14,8 @@ public class Session {
 
     /** The Session's unique identifier. */
     private int id;
+    /** The session's name. */
+    private String name;
 
     /** The User (therapist) of the session. */
     private User therapist; //TODO: find out: necessary?
@@ -22,17 +24,20 @@ public class Session {
     private SessionOwner owner;
     /** The date the session happened. */
     private String date;
-    /** The session's graph. */
-    private LineGraph graph;
+    /** The session's graph data. */
+    private GraphData graphData;
 
     public Session(int id, User therapist, SessionOwner sessionOwner) {
         this.id = id;
+        this.name = "Session " + id;
         this. therapist = therapist;
         this.owner = sessionOwner;
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date date = new Date();
         this.date = dateFormat.format(date);
+
+        this.graphData = new GraphData();
     }
 
     public boolean isInSession(Client client) {
@@ -61,5 +66,13 @@ public class Session {
 
     public SessionOwner getOwner() {
         return owner;
+    }
+
+    public GraphData getGraphData() {
+        return graphData;
+    }
+
+    public String getName() {
+        return name;
     }
 }

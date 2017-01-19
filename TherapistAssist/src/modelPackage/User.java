@@ -32,6 +32,8 @@ public class User implements Person {
     private int gidCounter;
     /** A counter that keeps track of the used Client IDs. */
     private int cidCounter;
+    /** A counter that keeps track of the used Session IDs. */
+    private int sidCounter;
 
     public User(int uid, String name, PersonalInformation pi) {
         this.uid = uid;
@@ -119,6 +121,12 @@ public class User implements Person {
         return false;
     }
 
+    public Session startSession(SessionOwner sessionOwner) {
+        Session session = new Session(++sidCounter, this, sessionOwner);
+        sessions.add(session);
+        return session;
+    }
+
     /**
      * Gives a list of all sessions a given client participated in. Returns an empty list if
      * the client did not
@@ -161,8 +169,8 @@ public class User implements Person {
     }
 
     @Override
-    public boolean equals(Person p) {
-        return p instanceof User && (p == this || p.getId() == uid);
+    public boolean equals(Object o) {
+        return o instanceof User && (o == this || ((User)o).getId() == uid);
     }
 
     @Override
