@@ -4,9 +4,7 @@ import modelPackage.*;
 import view.TherapistAssistGUI;
 
 import javax.swing.*;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 /**
  * Author:  Martijn
@@ -103,6 +101,7 @@ public class TherapistAssistControl implements Observer {
                     Session session = model.startSession(user, sessionOwner);
 
                     // TODO: add graph data to newly created session in real time (threads)
+                    Thread t1 = new LoadData(sessionOwner);
 
                     // Send newly created session to the view
                     view.addSessionToView(session);
@@ -150,6 +149,16 @@ public class TherapistAssistControl implements Observer {
         paulPi.setHelpQuestion("Anger management");
         Client paul = this.model.addClient(user, "Paul de Jong", paulPi);
 
+        // Create client 'Henk'
+        PersonalInformation henkPi = new PersonalInformation();
+        henkPi.setInitials("H.P.");
+        henkPi.setDateOfBirth("14-04-1967");
+        henkPi.setGender("Male");
+        henkPi.setHealthInsuranceNumber("842684597521");
+        henkPi.setAnamnesis("-");
+        henkPi.setHelpQuestion("Anger management");
+        Client henk = this.model.addClient(user, "Henk van Pamelen", henkPi);
+
         // Create group 'Group 1'
         Group group1 = this.model.addGroup(user);
         group1.setGroupName("Group 1");
@@ -157,6 +166,59 @@ public class TherapistAssistControl implements Observer {
         group1.setHelpQuestion("Anger management");
         group1.addClient(bert);
         group1.addClient(paul);
+
+        // Create group 'Group 2'
+        Group group2 = this.model.addGroup(user);
+        group2.setGroupName("Group 2");
+        group2.setAnamnesis("-");
+        group2.setHelpQuestion("Anger management");
+        group2.addClient(bert);
+        group2.addClient(henk);
+
+        // Create session for 'Bert'
+        Session bertSession = model.startSession(user, bert);
+        bertSession.getGraphData().setData(bert, generateRandomData(60));
+        bert.addSession(bertSession);
+
+        // Create sessions for 'Paul'
+        Session paulSession = model.startSession(user, paul);
+        paulSession.getGraphData().setData(paul, generateRandomData(60));
+        paul.addSession(paulSession);
+
+        Session paulSession2 = model.startSession(user, paul);
+        paulSession2.getGraphData().setData(paul, generateRandomData(60));
+        paul.addSession(paulSession2);
+
+        // Create session for 'Henk'
+        Session henkSession = model.startSession(user, henk);
+        henkSession.getGraphData().setData(henk, generateRandomData(60));
+        henk.addSession(henkSession);
+
+        // Create session for 'Group 1'
+        Session group1Session = model.startSession(user, group1);
+        group1Session.getGraphData().setData(bert, generateRandomData(60));
+        group1Session.getGraphData().setData(paul, generateRandomData(60));
+        group1.addSession(group1Session);
+
+        // Create session for 'Group 2'
+        Session group2Session = model.startSession(user, group2);
+        group2Session.getGraphData().setData(bert, generateRandomData(60));
+        group2Session.getGraphData().setData(henk, generateRandomData(60));
+        group2.addSession(group2Session);
+
+    }
+
+    private List<Integer[]> generateRandomData(int values) {
+        List<Integer[]> randomData = new ArrayList<>();
+
+        for (int i = 0; i <= values; i++) {
+            Random rand = new Random();
+            int value = rand.nextInt((90 - 60) + 1) + 60;
+            Integer[] data = {value, i};
+            randomData.add(data);
+        }
+
+        return randomData;
     }
 
     /**

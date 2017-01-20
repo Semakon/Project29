@@ -23,7 +23,6 @@ public class TherapistAssistGUI extends Observable {
     private JPanel cards;
     private JPanel clientsPane;
     private JPanel groupsPane;
-    private Map<Group, JPanel> participantsPanes;
     private Map<SessionOwner, JPanel> sessionPanes;
     private JPanel participantsPane;
     private JComboBox<Client> addableClients;
@@ -37,7 +36,7 @@ public class TherapistAssistGUI extends Observable {
     public static final String ADD_CLIENT_CARD = "AddClientCard";
     public static final String ADD_GROUP_CARD = "AddGroupCard";
     /** 'Dynamic' Card names
-     *  Profile cards*/
+     *  Profile cards */
     public static final String CLIENT_PROFILE_CARD = "ClientProfileCard";
     public static final String GROUP_PROFILE_CARD = "GroupProfileCard";
     /** Session overview cards */
@@ -169,32 +168,17 @@ public class TherapistAssistGUI extends Observable {
      * @param sessionOwner The sessions belong to this group or client.
      */
     public void buildSessionsOverviewCard(Container card, SessionOwner sessionOwner) {
-        // Get the amount of rows needed to display sessions
-        int x = sessionOwner.getSessions().size();
-
-        // Get the amount of participants to display in the participants pane
-        int x2 = 3;
-        if (sessionOwner instanceof Client) {
-            x2++;
-        } else if (sessionOwner instanceof Group) {
-            Group group = (Group) sessionOwner;
-            x2 += group.getParticipants().size();
-        } else {
-            // The sessionOwner should be an instance of either Group or Client
-            errorMessage("Session owner should be Group or Client object.");
-        }
-
         card.setLayout(new FlowLayout());
         card.setBackground(Color.WHITE);
         card.setPreferredSize(new Dimension(1000, 800));
 
         // Initiate panes
-        JPanel participantsPane = new JPanel(new GridLayout(x2, 1)); // x2 rows, 1 column
+        JPanel participantsPane = new JPanel(new GridLayout(0, 1)); // 0 rows, 1 column
         JPanel dataPane = new JPanel(new FlowLayout());
         JPanel topPane = new JPanel(new FlowLayout());
         JPanel sessionsMenuPane = new JPanel(new FlowLayout());
         //TODO: change sessionsPane to JScrollPane to show all content
-        JPanel sessionsPane = new JPanel(new GridLayout(x, 2)); // x rows, 2 columns
+        JPanel sessionsPane = new JPanel(new GridLayout(0, 2)); // 0 rows, 2 columns
 
         // Add the session pane to the session panes map so it can be used to change the overview
         // outside of this method
@@ -311,16 +295,8 @@ public class TherapistAssistGUI extends Observable {
 
         // Add sessions with line graphs to sessions pane
         List<Session> sessions = sessionOwner.getSessions();
-        for (int i = sessions.size() - 1; i >= 0; i--) {
-            //TODO: make session labels clickable
-            // Create label and graph pane
-            JLabel sessionLbl = new JLabel((i + 1) + ". " + sessions.get(i).getDate());
-            JPanel graphPane = new JPanel(); //TODO: insert actual graph
-            graphPane.setBackground(Color.CYAN); // place holder for actual graph
-
-            // Add label and pane to sessions pane
-            sessionsPane.add(sessionLbl);
-            sessionsPane.add(graphPane);
+        for (Session session : sessions) {
+            addSessionToView(session, true);
         }
 
         // Add panes to data pane
@@ -438,8 +414,11 @@ public class TherapistAssistGUI extends Observable {
         sessionMenuPane.add(startBtn);
         sessionMenuPane.add(saveBtn);
 
-        // TODO: add correct functions to graph-, video-, and notes pane
-        graphPane.add(session.getGraphData().buildLineGraphPanel(session.getName()));
+        // Add the line graph from the session to the graph pane
+        ChartPanel chart = session.getGraphData().buildLineGraphPanel(session.getName());
+        graphPane.add(chart);
+
+        // TODO: add correct functions to video- and notes pane
 
         sessionPane.add(graphPane);
         sessionPane.add(videoPane);

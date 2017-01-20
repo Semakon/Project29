@@ -1,5 +1,7 @@
 import modelPackage.Client;
 import modelPackage.GraphData;
+import modelPackage.LoadData;
+import modelPackage.SessionOwner;
 import org.jfree.chart.ChartPanel;
 
 import javax.swing.*;
@@ -17,6 +19,9 @@ public class Test {
 
     public Test() {
         this.graphData = new GraphData();
+    }
+
+    private void addValues() {
         List<Integer[]> list1 = new ArrayList<>();
         List<Integer[]> list2 = new ArrayList<>();
         Client client1 = new Client(1, "Bert Zonneklaar", null);
@@ -72,6 +77,8 @@ public class Test {
 
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(Test::createAndShowGUI);
+        SessionOwner sessionOwner = new Client(1, "Test client");
+        Thread t1 = new LoadData(sessionOwner);
     }
 
 }

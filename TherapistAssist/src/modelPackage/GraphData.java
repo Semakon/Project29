@@ -3,7 +3,12 @@ package modelPackage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.util.ArrayList;
@@ -26,7 +31,7 @@ public class GraphData {
     /** Horizontal unit display. */
     public static final String HORIZONTAL_UNIT = "Time (Minutes)";
     /** Baseline of horizontal unit. */
-    public static final int BASELINE = 50;
+    public static final int BASELINE = 75;
     /** Maximum session time in a graph in minutes. */
     public static final int MAX_SESSION_TIME = 60; // in minutes
 
@@ -60,6 +65,8 @@ public class GraphData {
                 PlotOrientation.VERTICAL,
                 true, true, false);
 
+        CategoryPlot plot = (CategoryPlot) lineChart.getPlot();
+        plot.getRangeAxis().setRange(50, 120);
         return new ChartPanel(lineChart);
     }
 
