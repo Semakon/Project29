@@ -3,18 +3,11 @@ package modelPackage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The data of a graph of a session.
@@ -34,6 +27,7 @@ public class GraphData {
     public static final int BASELINE = 75;
     /** Maximum session time in a graph in minutes. */
     public static final int MAX_SESSION_TIME = 60; // in minutes
+
 
     public GraphData() {
         this.dataMap = new HashMap<>();
@@ -70,6 +64,10 @@ public class GraphData {
         return new ChartPanel(lineChart);
     }
 
+    public void updatePanel(ChartPanel panel) {
+        panel.getChart().getCategoryPlot().setDataset(createDataSet());
+    }
+
     /**
      * Creates a data set with this object's data and returns it.
      * @return a data set created with this object's data.
@@ -100,6 +98,10 @@ public class GraphData {
         for (Client c : dataMap.keySet()) {
             if (client.equals(c)) {
                 dataMap.put(c, newData);
+                // Print arrays to the console (test)
+                for (Integer[] i : newData) {
+                    System.out.println(Arrays.toString(i));
+                }
                 return;
             }
         }

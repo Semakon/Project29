@@ -101,7 +101,7 @@ public class TherapistAssistControl implements Observer {
                     Session session = model.startSession(user, sessionOwner);
 
                     // TODO: add graph data to newly created session in real time (threads)
-                    Thread t1 = new LoadData(sessionOwner);
+//                    Thread t1 = new LoadData(sessionOwner);
 
                     // Send newly created session to the view
                     view.addSessionToView(session);

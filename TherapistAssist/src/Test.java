@@ -8,17 +8,46 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Author:  Martijn
  * Date:    3-1-2017
  */
-public class Test {
+public class Test extends Thread {
 
     private GraphData graphData;
+    private ChartPanel panel;
+    private Client client;
+    private LoadData loadData;
+    private Container pane;
 
-    public Test() {
+    public Test(Container pane) {
+        this.pane = pane;
         this.graphData = new GraphData();
+        SessionOwner sessionOwner = new Client(1, "Test client");
+        this.client = (Client)sessionOwner;
+        loadData = new LoadData(sessionOwner);
+        buildGUI();
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            updateGraph();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateGraph() {
+        loadData.loadClientData();
+        graphData.setData(client, loadData.getSessionData());
+        graphData.updatePanel(panel);
+        pane.repaint();
     }
 
     private void addValues() {
@@ -55,8 +84,8 @@ public class Test {
         graphData.setData(client2, list2);
     }
 
-    public void buildGUI(Container pane) {
-        ChartPanel panel = graphData.buildLineGraphPanel("Test Graph");
+    public void buildGUI() {
+        panel = graphData.buildLineGraphPanel("Test Graph");
         pane.add(panel);
     }
 
@@ -67,8 +96,8 @@ public class Test {
         frame.setPreferredSize(new Dimension(500, 400));
 
         // Create and set up content pane.
-        Test test = new Test();
-        test.buildGUI(frame.getContentPane());
+        Thread test = new Test(frame.getContentPane());
+        test.start();
 
         // Display the window
         frame.pack();
@@ -77,8 +106,6 @@ public class Test {
 
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(Test::createAndShowGUI);
-        SessionOwner sessionOwner = new Client(1, "Test client");
-        Thread t1 = new LoadData(sessionOwner);
     }
 
 }

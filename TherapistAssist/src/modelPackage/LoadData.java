@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Loads session data from file to put in a line graph.
@@ -13,7 +14,7 @@ import java.util.Scanner;
  * Author:  martijn
  * Date:    20-1-17.
  */
-public class LoadData extends Thread {
+public class LoadData {
 
     private SessionOwner sessionOwner;
     private List<Integer[]> sessionData;
@@ -25,12 +26,7 @@ public class LoadData extends Thread {
         this.sessionData = new ArrayList<>();
     }
 
-    @Override
-    public void run() {
-        loadClientData();
-    }
-
-    private void loadClientData() {
+    public void loadClientData() {
         String fileName = FILE_PREFIX;
         if (sessionOwner instanceof Client) {
             fileName += ((Client) sessionOwner).getId();
@@ -60,23 +56,26 @@ public class LoadData extends Thread {
                     scanner.next();
                 }
 
+                // Save data to array
                 Integer[] data = new Integer[2];
                 data[0] = Integer.parseInt(scanner.next());
                 data[1] = Integer.parseInt(scanner.next());
+
+                // Add array to list of session data
                 sessionData.add(data);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        for (Integer[] i : sessionData) {
-            System.out.println(Arrays.toString(i));
-        }
+
+        // Print arrays to the console (test)
+//        for (Integer[] i : sessionData) {
+//            System.out.println(Arrays.toString(i));
+//        }
     }
 
-    public static void main(String[] args) {
-        SessionOwner sessionOwner = new Client(1, "Test client");
-        Thread t1 = new LoadData(sessionOwner);
-        t1.run();
+    public List<Integer[]> getSessionData() {
+        return sessionData;
     }
 
 }
