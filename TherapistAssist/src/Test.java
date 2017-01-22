@@ -14,78 +14,43 @@ import java.util.concurrent.TimeUnit;
  * Author:  Martijn
  * Date:    3-1-2017
  */
-public class Test extends Thread {
+public class Test {
 
+    private Thread t1;
+    private Thread t2;
     private GraphData graphData;
     private ChartPanel panel;
-    private Client client;
-    private LoadData loadData;
     private Container pane;
+    private String switchBtnText;
 
     public Test(Container pane) {
         this.pane = pane;
         this.graphData = new GraphData();
-        SessionOwner sessionOwner = new Client(1, "Test client");
-        this.client = (Client)sessionOwner;
-        loadData = new LoadData(sessionOwner);
+        this.switchBtnText = "Start";
         buildGUI();
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            updateGraph();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    public void start() {
+        SessionOwner sessionOwner = new Client(1, "Test client");
+        t1 = new LoadData(sessionOwner, panel, pane);
+        t2 = new DataAddTest();
+        t1.start();
+        t2.start();
     }
 
-    public void updateGraph() {
-        loadData.loadClientData();
-        graphData.setData(client, loadData.getSessionData());
-        graphData.updatePanel(panel);
-        pane.repaint();
-    }
-
-    private void addValues() {
-        List<Integer[]> list1 = new ArrayList<>();
-        List<Integer[]> list2 = new ArrayList<>();
-        Client client1 = new Client(1, "Bert Zonneklaar", null);
-        Client client2 = new Client(2, "Paul de Jong", null);
-
-        Integer[] data1 = {40, 0};
-        Integer[] data2 = {54, 1};
-        Integer[] data3 = {31, 2};
-        Integer[] data4 = {78, 3};
-        Integer[] data5 = {89, 4};
-
-        Integer[] data6 = {35, 4};
-        Integer[] data7 = {12, 0};
-        Integer[] data8 = {31, 1};
-        Integer[] data9 = {28, 2};
-        Integer[] data0 = {43, 3};
-
-        list1.add(data1);
-        list1.add(data2);
-        list1.add(data3);
-        list1.add(data4);
-        list1.add(data5);
-
-        list2.add(data6);
-        list2.add(data7);
-        list2.add(data8);
-        list2.add(data9);
-        list2.add(data0);
-
-        graphData.setData(client1, list1);
-        graphData.setData(client2, list2);
+    public void switchUpdateGraph() {
+        switchBtnText = ((LoadData) t1).switchUpdateGraph() ? "Stop" : "Start";
     }
 
     public void buildGUI() {
+        pane.setLayout(new FlowLayout());
         panel = graphData.buildLineGraphPanel("Test Graph");
+        JButton switchBtn = new JButton(switchBtnText);
+        switchBtn.addActionListener(e -> {
+            switchUpdateGraph();
+            switchBtn.setText(switchBtnText);
+        });
+        pane.add(switchBtn);
         pane.add(panel);
     }
 
@@ -96,7 +61,7 @@ public class Test extends Thread {
         frame.setPreferredSize(new Dimension(500, 400));
 
         // Create and set up content pane.
-        Thread test = new Test(frame.getContentPane());
+        Test test = new Test(frame.getContentPane());
         test.start();
 
         // Display the window

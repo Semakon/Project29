@@ -1,12 +1,13 @@
 package modelPackage;
 
+import org.jfree.chart.ChartPanel;
+
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Loads session data from file to put in a line graph.
@@ -14,16 +15,39 @@ import java.util.concurrent.TimeUnit;
  * Author:  martijn
  * Date:    20-1-17.
  */
-public class LoadData {
+public class LoadData extends Thread {
 
+    private boolean updateGraph;
     private SessionOwner sessionOwner;
     private List<Integer[]> sessionData;
+    private GraphData graphData;
+    private ChartPanel panel;
+    private Container pane;
     public static final String FILE_LOCATION = "/home/martijn/Documents/Mod6Project29/";
     public static final String FILE_PREFIX = "client-";
 
-    public LoadData(SessionOwner sessionOwner) {
+    public LoadData(SessionOwner sessionOwner, ChartPanel panel, Container pane) {
         this.sessionOwner = sessionOwner;
+        this.graphData = new GraphData();
+        this.panel = panel;
+        this.pane = pane;
         this.sessionData = new ArrayList<>();
+        this.updateGraph = true;
+    }
+
+    @Override
+    public void run() {
+        while(updateGraph) {
+            loadClientData();
+            graphData.setData((Client) sessionOwner, sessionData);
+            graphData.updatePanel(panel);
+            pane.repaint();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void loadClientData() {
@@ -72,6 +96,15 @@ public class LoadData {
 //        for (Integer[] i : sessionData) {
 //            System.out.println(Arrays.toString(i));
 //        }
+    }
+
+    public boolean switchUpdateGraph() {
+        this.updateGraph = !this.updateGraph;
+        return this.updateGraph;
+    }
+
+    public boolean isUpdateGraph() {
+        return updateGraph;
     }
 
     public List<Integer[]> getSessionData() {
