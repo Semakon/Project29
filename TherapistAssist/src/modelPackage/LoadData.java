@@ -4,8 +4,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +20,8 @@ public class LoadData extends Thread {
     private boolean updateGraph;
     private Session session;
     private Container pane;
+    private String dateFormatted;
+    private String measureTime;
 
     public static final String FILE_PATH = "/home/martijn/Documents/Mod6Project29/";
     public static final String FILE_NAME = "client-1";
@@ -31,6 +31,13 @@ public class LoadData extends Thread {
         this.session = session;
         this.pane = pane;
         this.updateGraph = true;
+
+        Long time = System.currentTimeMillis();
+        Date date = new Date(time);
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+        dateFormatted = formatter.format(date);
+        dateFormatted = dateFormatted.substring(0, dateFormatted.length() - 7);
+        measureTime = "";
     }
 
     @Override
@@ -61,14 +68,14 @@ public class LoadData extends Thread {
         }
 
         // Clear file
-        try {
-            File file = new File(FILE_PATH + FILE_NAME);
-            PrintWriter writer = new PrintWriter(file);
-            writer.print("");
-            writer.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            File file = new File(FILE_PATH);
+//            PrintWriter writer = new PrintWriter(file);
+//            writer.print("");
+//            writer.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -90,6 +97,42 @@ public class LoadData extends Thread {
             for (int i = 1; i <= 7; i++) {
                 if (scanner.hasNext()) scanner.next();
             }
+
+            // Save the next int as start time
+            int startTime = 0;
+            if (scanner.hasNext()) startTime = Integer.parseInt(scanner.next());
+            System.out.println(startTime);
+
+
+
+                while (!dateFormatted.equals(measureTime) && scanner.hasNext()) {
+
+                    if(scanner.hasNext()) {
+                        scanner.next();
+                    }
+                    if(scanner.hasNext()) {
+                        measureTime = scanner.next();
+                    }
+                    measureTime = measureTime.substring(0, measureTime.length() - 7);
+
+
+
+                    // Skip next 6 strings
+                    for (int i = 1; i <= 6; i++) {
+                        if(scanner.hasNext()){
+                            if(scanner.hasNext()) {
+                                scanner.next();
+                            }
+                        }
+
+                    }
+
+                }
+                measureTime = "";
+
+
+
+
 
             // Scan for data
             while (scanner.hasNext()) {
