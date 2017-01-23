@@ -28,11 +28,9 @@ public class Test {
     }
 
     public void start() {
-        SessionOwner sessionOwner = new Client(1, "Test client");
-        t1 = new LoadData(sessionOwner, null); // TODO: fix null
-//        t2 = new DataAddTest();
-        t1.start();
-//        t2.start();
+//        SessionOwner sessionOwner = new Client(1, "Test client");
+//        t1 = new LoadData(sessionOwner, null); // TODO: fix null
+//        t1.start();
     }
 
     public void switchUpdateGraph() {

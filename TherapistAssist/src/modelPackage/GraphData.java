@@ -54,18 +54,18 @@ public class GraphData {
         // Create a line chart
         JFreeChart lineChart = ChartFactory.createLineChart(
                 chartTitle,
-                HORIZONTAL_UNIT, VERTICAL_UNIT,
+                HORIZONTAL_UNIT,
+                VERTICAL_UNIT,
                 createDataSet(),
                 PlotOrientation.VERTICAL,
-                true, true, false);
+                true,
+                true,
+                false
+        );
 
         CategoryPlot plot = (CategoryPlot) lineChart.getPlot();
         plot.getRangeAxis().setRange(50, 120);
         return new ChartPanel(lineChart);
-    }
-
-    public void updatePanel(ChartPanel panel) {
-        panel.getChart().getCategoryPlot().setDataset(createDataSet());
     }
 
     /**
@@ -95,20 +95,20 @@ public class GraphData {
      * @param newData The new data.
      */
     public void setData(Client client, List<Integer[]> newData) {
-        System.out.println("\nnewData:");
-        for (Integer[] i : newData) {
-            System.out.println(Arrays.toString(i));
-        }
+//        System.out.println("\nnewData:");
+//        for (Integer[] i : newData) {
+//            System.out.println(Arrays.toString(i));
+//        }
         for (Client c : dataMap.keySet()) {
             if (client.equals(c)) {
 
                 dataMap.put(c, newData);
 
                 // Print arrays to the console (test)
-                System.out.println("\ndataMap contents:");
-                for (Integer[] i : dataMap.get(c)) {
-                    System.out.println(Arrays.toString(i));
-                }
+//                System.out.println("\ndataMap contents:");
+//                for (Integer[] i : dataMap.get(c)) {
+//                    System.out.println(Arrays.toString(i));
+//                }
                 return;
             }
         }

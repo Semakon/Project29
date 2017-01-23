@@ -20,12 +20,14 @@ public class TherapistAssistGUI extends Observable {
     private List<String> clientData;
     private List<String> groupData;
     private SessionOwner currentOwner;
+    private Session currentSession;
     private JPanel cards;
     private JPanel clientsPane;
     private JPanel groupsPane;
     private ChartPanel activeChart;
     private Container activePane;
     private Map<SessionOwner, JPanel> sessionPanes;
+    private Map<Session, ChartPanel> sessionCharts;
     private JPanel participantsPane;
     private JComboBox<Client> addableClients;
     private String userName;
@@ -53,6 +55,7 @@ public class TherapistAssistGUI extends Observable {
         this.clients = new ArrayList<>();
         this.groups = new ArrayList<>();
         this.sessionPanes = new HashMap<>();
+        this.sessionCharts = new HashMap<>();
     }
 
     /**
@@ -317,8 +320,13 @@ public class TherapistAssistGUI extends Observable {
      * @param card The card on which the GUI is built.
      * @param session The session this card represents.
      */
-    public void buildSessionCard(Container card, Session session) {
+    public void buildSessionCard(Container card, Session session, boolean init) {
         SessionOwner sessionOwner = session.getOwner();
+
+        // Create chart and add it to chart map
+        activeChart = session.getGraphData().buildLineGraphPanel(session.getName());
+        sessionCharts.put(session, activeChart);
+
         // Get the amount of participants to display in the participants pane
         int x = 3;
         if (sessionOwner instanceof Client) {
@@ -390,16 +398,28 @@ public class TherapistAssistGUI extends Observable {
             }
         });
         startBtn.addActionListener(e -> {
-            //TODO: start receiving graph data and keep updating graph (threads)
+            currentSession = session;
 
             setChanged();
             notifyObservers(GuiAction.startSession);
-//            startBtn.setText(startBtnTxt);
+
+            // Remove start button to avoid problems
+            for (Component c : sessionMenuPane.getComponents()) {
+                if (c.equals(startBtn)) sessionMenuPane.remove(startBtn);
+            }
         });
         saveBtn.addActionListener(e -> {
-            // TODO: save graph data
             setChanged();
             notifyObservers(GuiAction.stopSession);
+
+            System.out.println("saveBtn actionListener after notify observers");
+
+            // Update last added graph
+            int size = sessionPanes.get(sessionOwner).getComponentCount();
+            sessionPanes.get(sessionOwner).remove(size - 1);
+            sessionPanes.get(sessionOwner).add(session.getGraphData()
+                    .buildLineGraphPanel(session.getName()));
+
         });
         backBtn.addActionListener(e -> {
             // Notify controller to stop updating graph
@@ -407,11 +427,11 @@ public class TherapistAssistGUI extends Observable {
             notifyObservers(GuiAction.stopSession);
 
             // Return to session owner's session overview without saving
-            CardLayout cl = (CardLayout)cards.getLayout();
+            CardLayout cl = (CardLayout) cards.getLayout();
             if (sessionOwner instanceof Client) {
-                cl.show(cards, CLIENT_SESSIONS_OVERVIEW_CARD + ((Client)sessionOwner).getId());
+                cl.show(cards, CLIENT_SESSIONS_OVERVIEW_CARD + ((Client) sessionOwner).getId());
             } else if (sessionOwner instanceof Group) {
-                cl.show(cards, GROUP_SESSIONS_OVERVIEW_CARD + ((Group)sessionOwner).getGid());
+                cl.show(cards, GROUP_SESSIONS_OVERVIEW_CARD + ((Group) sessionOwner).getGid());
             } else {
                 // The sessionOwner should be an instance of either Group or Client
                 errorMessage("Session owner should be Group or Client object.");
@@ -426,15 +446,20 @@ public class TherapistAssistGUI extends Observable {
 
         sessionMenuPane.add(sessionNameLbl);
         sessionMenuPane.add(sessionDateLbl);
-        sessionMenuPane.add(startBtn);
-        sessionMenuPane.add(saveBtn);
+        if (!init) {
+            sessionMenuPane.add(startBtn);
+            sessionMenuPane.add(saveBtn);
+        }
 
         // Add the line graph from the session to the graph pane
-        activeChart = session.getGraphData().buildLineGraphPanel(session.getName());
         graphPane.add(activeChart);
         activePane = graphPane;
 
         // TODO: add correct functions to video- and notes pane
+        // Create text area for notes
+        JTextArea textArea = new JTextArea();
+        textArea.setPreferredSize(new Dimension(360, 305));
+        notesPane.add(textArea);
 
         sessionPane.add(graphPane);
         sessionPane.add(videoPane);
@@ -1215,14 +1240,18 @@ public class TherapistAssistGUI extends Observable {
 
         // Create new card for the new session view
         JPanel newSession = new JPanel();
-        buildSessionCard(newSession, session);
+        buildSessionCard(newSession, session, init);
         cards.add(newSession, cardId + id);
 
         // Create new label and graph pane
         JLabel lbl = new JLabel(session.getName());
 
-        // *** It is assumed the graph already contains data at this point. ***
+        // Newly created graph is empty
         ChartPanel graph = session.getGraphData().buildLineGraphPanel(session.getName());
+
+        // Add graph to session graphs map so it can be updated
+        sessionCharts.put(session, graph);
+        System.out.println("addSessionToView: " + session.getName());
 
         lbl.addMouseListener(new MouseAdapter() {
             @Override
@@ -1297,4 +1326,9 @@ public class TherapistAssistGUI extends Observable {
     public SessionOwner getCurrentOwner() {
         return currentOwner;
     }
+
+    public Session getCurrentSession() {
+        return currentSession;
+    }
+
 }

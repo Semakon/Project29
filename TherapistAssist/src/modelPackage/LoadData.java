@@ -16,25 +16,35 @@ import java.util.Scanner;
 public class LoadData extends Thread {
 
     private boolean updateGraph;
-    private SessionOwner sessionOwner;
-    private GraphData graphData;
+    private Session session;
     private Container pane;
-    public static final String FILE_PATH = "C:\\Users\\Martijn\\IdeaProjects\\" +
-            "Project29\\TherapistAssist\\src\\client-1";
 
-    public LoadData(SessionOwner sessionOwner, Container pane) {
-        this.sessionOwner = sessionOwner;
-        this.graphData = new GraphData();
+    public static final String FILE_PATH = "/home/martijn/Documents/Mod6Project29/client-1";
+
+    public LoadData(Session session, Container pane) {
+        this.session = session;
         this.pane = pane;
         this.updateGraph = true;
     }
 
     @Override
     public void run() {
+        Client client = null;
+        if (session.getOwner() instanceof Group) {
+            Group group = (Group)session.getOwner();
+            if (group.getParticipants().size() >= 1) {
+                client = group.getParticipants().get(0);
+            } else {
+                //TODO: Exception: empty group
+            }
+        } else {
+            client = ((Client)session.getOwner());
+        }
+        GraphData graphData = session.getGraphData();
         while(updateGraph) {
-            graphData.setData((Client) sessionOwner, loadClientData());
+            graphData.setData(client, loadClientData());
             pane.removeAll();
-            pane.add(graphData.buildLineGraphPanel(((Client) sessionOwner).getName()));
+            pane.add(graphData.buildLineGraphPanel((session.getName())));
             pane.revalidate();
             pane.repaint();
             try {

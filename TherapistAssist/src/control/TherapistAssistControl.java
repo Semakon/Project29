@@ -107,14 +107,20 @@ public class TherapistAssistControl implements Observer {
                     view.addSessionToView(session);
                     return;
                 case startSession:
+                    // Don't start a new thread when one is already active
                     if (threadActive) return;
+
+                    // Activate thread
                     threadActive = true;
+
                     // Add graph data to newly created session in real time (threads)
-                    t1 = new LoadData(view.getCurrentOwner(), view.getActivePane());
+                    t1 = new LoadData(view.getCurrentSession(), view.getActivePane());
                     t1.start();
                     return;
                 case stopSession:
+                    // Can't stop a thread that doesn't exist
                     if (!threadActive) return;
+
                     // Stop updating graph by joining thread
                     try {
                         ((LoadData)t1).setUpdateGraph(false);
@@ -122,6 +128,8 @@ public class TherapistAssistControl implements Observer {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
+                    // Deactivate thread
                     threadActive = false;
                     return;
                 case logout:
