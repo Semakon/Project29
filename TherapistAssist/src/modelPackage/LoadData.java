@@ -4,7 +4,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,8 +23,9 @@ public class LoadData extends Thread {
     private boolean updateGraph;
     private Session session;
     private Container pane;
+    private boolean started = false;
 
-    public static final String FILE_PATH = "/home/martijn/Documents/Mod6Project29/client-1";
+    public static final String FILE_PATH = "/home/sam/Documents/mod6log.txt";
 
     public LoadData(Session session, Container pane) {
         this.session = session;
@@ -72,6 +77,7 @@ public class LoadData extends Thread {
         try {
             Scanner scanner = new Scanner(file);
 
+
             // Skip first two lines
             for (int i = 0; i < 30; i++) {
                 if (scanner.hasNextLine()) scanner.nextLine();
@@ -84,6 +90,39 @@ public class LoadData extends Thread {
             // Save the next int as start time
             int startTime = 0;
             if (scanner.hasNext()) startTime = Integer.parseInt(scanner.next());
+            System.out.println(startTime);
+
+            if(started == false) {
+                String dateFormatted;
+                String measureTime = "";
+                Long time = System.currentTimeMillis();
+                Date date = new Date(time);
+                DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+                dateFormatted = formatter.format(date);
+                dateFormatted = dateFormatted.substring(0, dateFormatted.length() - 7);
+                System.out.println(dateFormatted);
+
+                Thread.sleep(10);
+                while (!dateFormatted.equals(measureTime)) {
+
+                    scanner.next();
+                    measureTime = scanner.next();
+                    measureTime = measureTime.substring(0, measureTime.length() - 7);
+                    System.out.println(measureTime);
+
+
+                    // Skip next 6 strings
+                    for (int i = 1; i <= 6; i++) {
+                        scanner.next();
+
+                    }
+                    Thread.sleep(10);
+                }
+                started = true;
+            }
+
+
+
 
             // Scan for data
             while (scanner.hasNext()) {
@@ -101,6 +140,8 @@ public class LoadData extends Thread {
                 sessionData.add(data);
             }
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return sessionData;
