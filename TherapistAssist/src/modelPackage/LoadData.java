@@ -3,7 +3,8 @@ package modelPackage;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -103,36 +104,30 @@ public class LoadData extends Thread {
             if (scanner.hasNext()) startTime = Integer.parseInt(scanner.next());
             System.out.println(startTime);
 
+            while (!dateFormatted.equals(measureTime) && scanner.hasNext()) {
 
-
-                while (!dateFormatted.equals(measureTime) && scanner.hasNext()) {
-
-                    if(scanner.hasNext()) {
-                        scanner.next();
-                    }
-                    if(scanner.hasNext()) {
-                        measureTime = scanner.next();
-                    }
-                    measureTime = measureTime.substring(0, measureTime.length() - 7);
+                if(scanner.hasNext()) {
+                    scanner.next();
+                }
+                if(scanner.hasNext()) {
+                    measureTime = scanner.next();
+                }
+                measureTime = measureTime.substring(0, measureTime.length() - 7);
 
 
 
-                    // Skip next 6 strings
-                    for (int i = 1; i <= 6; i++) {
-                        if(scanner.hasNext()){
-                            if(scanner.hasNext()) {
-                                scanner.next();
-                            }
+                // Skip next 6 strings
+                for (int i = 1; i <= 6; i++) {
+                    if(scanner.hasNext()){
+                        if(scanner.hasNext()) {
+                            scanner.next();
                         }
-
                     }
 
                 }
-                measureTime = "";
 
-
-
-
+            }
+            measureTime = "";
 
             // Scan for data
             while (scanner.hasNext()) {
