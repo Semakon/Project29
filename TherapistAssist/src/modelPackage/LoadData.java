@@ -3,8 +3,6 @@ package modelPackage;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,7 +21,9 @@ public class LoadData extends Thread {
     private boolean updateGraph;
     private Session session;
     private Container pane;
-    private boolean started = false;
+    private String dateFormatted;
+    private String measureTime;
+
 
     public static final String FILE_PATH = "/home/sam/Documents/mod6log.txt";
 
@@ -31,6 +31,13 @@ public class LoadData extends Thread {
         this.session = session;
         this.pane = pane;
         this.updateGraph = true;
+
+        Long time = System.currentTimeMillis();
+        Date date = new Date(time);
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+        dateFormatted = formatter.format(date);
+        dateFormatted = dateFormatted.substring(0, dateFormatted.length() - 7);
+        measureTime = "";
     }
 
     @Override
@@ -61,14 +68,14 @@ public class LoadData extends Thread {
         }
 
         // Clear file
-        try {
-            File file = new File(FILE_PATH);
-            PrintWriter writer = new PrintWriter(file);
-            writer.print("");
-            writer.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            File file = new File(FILE_PATH);
+//            PrintWriter writer = new PrintWriter(file);
+//            writer.print("");
+//            writer.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -97,34 +104,33 @@ public class LoadData extends Thread {
             if (scanner.hasNext()) startTime = Integer.parseInt(scanner.next());
             System.out.println(startTime);
 
-            if(started == false) {
-                String dateFormatted;
-                String measureTime = "";
-                Long time = System.currentTimeMillis();
-                Date date = new Date(time);
-                DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
-                dateFormatted = formatter.format(date);
-                dateFormatted = dateFormatted.substring(0, dateFormatted.length() - 7);
-                System.out.println(dateFormatted);
 
-                Thread.sleep(10);
-                while (!dateFormatted.equals(measureTime)) {
 
-                    scanner.next();
-                    measureTime = scanner.next();
+                while (!dateFormatted.equals(measureTime) && scanner.hasNext()) {
+
+                    if(scanner.hasNext()) {
+                        scanner.next();
+                    }
+                    if(scanner.hasNext()) {
+                        measureTime = scanner.next();
+                    }
                     measureTime = measureTime.substring(0, measureTime.length() - 7);
-                    System.out.println(measureTime);
+
 
 
                     // Skip next 6 strings
                     for (int i = 1; i <= 6; i++) {
-                        scanner.next();
+                        if(scanner.hasNext()){
+                            if(scanner.hasNext()) {
+                                scanner.next();
+                            }
+                        }
 
                     }
-                    Thread.sleep(10);
+
                 }
-                started = true;
-            }
+                measureTime = "";
+
 
 
 
@@ -146,8 +152,7 @@ public class LoadData extends Thread {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
         }
         return sessionData;
     }
