@@ -17,7 +17,10 @@ public class Client implements Person, SessionOwner {
     private String name;
     /** The Client's personal information. */
     private PersonalInformation pi;
+    /** The Session this Client has participated in. */
     private List<Session> sessions;
+    /** Path to picture of Client. */
+    private String picturePath;
 
     public Client(int cid, String name, PersonalInformation pi) {
         this.cid = cid;
@@ -60,6 +63,14 @@ public class Client implements Person, SessionOwner {
 
     public List<Session> getSessions() {
         return sessions;
+    }
+
+    public String getPicturePath() {
+        return picturePath;
+    }
+
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
     }
 
     @Override

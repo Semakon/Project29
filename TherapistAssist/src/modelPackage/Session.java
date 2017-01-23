@@ -29,9 +29,9 @@ public class Session {
 
     public Session(int id, User therapist, SessionOwner sessionOwner) {
         this.id = id;
-        this.name = "Session " + id;
-        this. therapist = therapist;
         this.owner = sessionOwner;
+        this.name = "Session " + (owner.getSessions().size() + 1);
+        this. therapist = therapist;
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date date = new Date();
@@ -42,7 +42,7 @@ public class Session {
 
     public boolean isInSession(Client client) {
         if (owner instanceof Client) {
-            return client.equals((Client)owner);
+            return client.equals(owner);
         }
         Group group = (Group)owner;
         return group.isInGroup(client);
@@ -75,4 +75,10 @@ public class Session {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }
