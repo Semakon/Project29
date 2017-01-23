@@ -164,6 +164,7 @@ public class TherapistAssistControl implements Observer {
         bertPi.setAnamnesis("-");
         bertPi.setHelpQuestion("Anger management");
         Client bert = this.model.addClient(user, "Bert Zonneklaar", bertPi);
+        bert.setPicturePath(LoadData.FILE_PATH + "Bert.jpg");
 
         // Create client 'Paul'
         PersonalInformation paulPi = new PersonalInformation();
@@ -174,6 +175,7 @@ public class TherapistAssistControl implements Observer {
         paulPi.setAnamnesis("-");
         paulPi.setHelpQuestion("Anger management");
         Client paul = this.model.addClient(user, "Paul de Jong", paulPi);
+        paul.setPicturePath(LoadData.FILE_PATH + "Paul.jpg");
 
         // Create client 'Henk'
         PersonalInformation henkPi = new PersonalInformation();
@@ -184,6 +186,7 @@ public class TherapistAssistControl implements Observer {
         henkPi.setAnamnesis("-");
         henkPi.setHelpQuestion("Anger management");
         Client henk = this.model.addClient(user, "Henk van Pamelen", henkPi);
+        henk.setPicturePath(LoadData.FILE_PATH + "Henk.jpg");
 
         // Create group 'Group 1'
         Group group1 = this.model.addGroup(user);

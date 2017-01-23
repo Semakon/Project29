@@ -20,7 +20,9 @@ public class LoadData extends Thread {
     private Session session;
     private Container pane;
 
-    public static final String FILE_PATH = "/home/martijn/Documents/Mod6Project29/client-1";
+    public static final String FILE_PATH = "/home/martijn/Documents/Mod6Project29/";
+    public static final String FILE_NAME = "client-1";
+    public static final int LINE_SKIPS = 30;
 
     public LoadData(Session session, Container pane) {
         this.session = session;
@@ -66,14 +68,18 @@ public class LoadData extends Thread {
         }
     }
 
+    /**
+     * Loads the client data from a file and returns it as a list of integer arrays.
+     * @return The data from the watch of the client as a List of Integer arrays.
+     */
     public List<Integer[]> loadClientData() {
         List<Integer[]> sessionData = new ArrayList<>();
-        File file = new File(FILE_PATH);
+        File file = new File(FILE_PATH + FILE_NAME);
         try {
             Scanner scanner = new Scanner(file);
 
-            // Skip first two lines
-            for (int i = 0; i < 30; i++) {
+            // Skip first few lines
+            for (int i = 0; i < LINE_SKIPS; i++) {
                 if (scanner.hasNextLine()) scanner.nextLine();
             }
 
@@ -81,6 +87,7 @@ public class LoadData extends Thread {
             for (int i = 1; i <= 7; i++) {
                 if (scanner.hasNext()) scanner.next();
             }
+
             // Save the next int as start time
             int startTime = 0;
             if (scanner.hasNext()) startTime = Integer.parseInt(scanner.next());

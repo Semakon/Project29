@@ -114,4 +114,9 @@ public class Group implements SessionOwner {
         return sessions;
     }
 
+    @Override
+    public String toString() {
+        return groupName;
+    }
+
 }
