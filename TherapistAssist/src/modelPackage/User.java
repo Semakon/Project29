@@ -124,6 +124,7 @@ public class User implements Person {
     public Session startSession(SessionOwner sessionOwner) {
         Session session = new Session(++sidCounter, this, sessionOwner);
         sessions.add(session);
+        sessionOwner.addSession(session);
         return session;
     }
 

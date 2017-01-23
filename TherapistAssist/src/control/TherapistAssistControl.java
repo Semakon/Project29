@@ -155,6 +155,8 @@ public class TherapistAssistControl implements Observer {
      * Adds a few clients and groups for testing purposes.
      */
     private void addTestClients() {
+        String path = "/imgs/";
+
         // Create client 'Bert'
         PersonalInformation bertPi = new PersonalInformation();
         bertPi.setInitials("B.Z.");
@@ -164,7 +166,7 @@ public class TherapistAssistControl implements Observer {
         bertPi.setAnamnesis("-");
         bertPi.setHelpQuestion("Anger management");
         Client bert = this.model.addClient(user, "Bert Zonneklaar", bertPi);
-        bert.setPicturePath(LoadData.FILE_PATH + "Bert.jpg");
+        bert.setPicturePath(path + "Bert.jpg");
 
         // Create client 'Paul'
         PersonalInformation paulPi = new PersonalInformation();
@@ -175,7 +177,7 @@ public class TherapistAssistControl implements Observer {
         paulPi.setAnamnesis("-");
         paulPi.setHelpQuestion("Anger management");
         Client paul = this.model.addClient(user, "Paul de Jong", paulPi);
-        paul.setPicturePath(LoadData.FILE_PATH + "Paul.jpg");
+        paul.setPicturePath(path + "Paul.jpg");
 
         // Create client 'Henk'
         PersonalInformation henkPi = new PersonalInformation();
@@ -186,7 +188,7 @@ public class TherapistAssistControl implements Observer {
         henkPi.setAnamnesis("-");
         henkPi.setHelpQuestion("Anger management");
         Client henk = this.model.addClient(user, "Henk van Pamelen", henkPi);
-        henk.setPicturePath(LoadData.FILE_PATH + "Henk.jpg");
+        henk.setPicturePath(path + "Henk.jpg");
 
         // Create group 'Group 1'
         Group group1 = this.model.addGroup(user);

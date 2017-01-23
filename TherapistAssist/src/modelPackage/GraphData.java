@@ -18,32 +18,16 @@ import java.util.*;
 public class GraphData {
 
     /** Map of client to data (array: {Vertical unit, Horizontal unit}). */
-    private Map<Client, List<Integer[]>> dataMap;
+    private Map<Client, List<String[]>> dataMap;
     /** Vertical unit display. */
     public static final String VERTICAL_UNIT = "Stress level";
     /** Horizontal unit display. */
     public static final String HORIZONTAL_UNIT = "Time (Minutes)";
     /** Baseline of horizontal unit. */
-    public static final int BASELINE = 75;
-    /** Maximum session time in a graph in minutes. */
-    public static final int MAX_SESSION_TIME = 60; // in minutes
 
 
     public GraphData() {
         this.dataMap = new HashMap<>();
-
-        // Create baseline using a fake client
-//        Client fakeClient = new Client(-1, "Baseline");
-
-        // Create the list of data for the baseline
-//        List<Integer[]> baseline = new ArrayList<>();
-//        for (int i = 0; i <= MAX_SESSION_TIME; i++) {
-//            Integer[] tempData = {BASELINE, i};
-//            baseline.add(tempData);
-//        }
-
-        // Add the baseline data to the data map using the fake client as key
-//        this.dataMap.put(fakeClient, baseline);
     }
 
     /**
@@ -65,6 +49,7 @@ public class GraphData {
 
         CategoryPlot plot = (CategoryPlot) lineChart.getPlot();
         plot.getRangeAxis().setRange(50, 120);
+
         return new ChartPanel(lineChart);
     }
 
@@ -76,11 +61,13 @@ public class GraphData {
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
         for (Client client : dataMap.keySet()) {
-            List<Integer[]> list = dataMap.get(client);
-            for (Integer[] a : list) {
+            List<String[]> list = dataMap.get(client);
+            for (String[] a : list) {
                 if (a.length == 2) {
-                    // dataSet.addValue(Vertical unit, Client name, Horizontal unit);
-                    dataSet.addValue(a[0], client.getName(), a[1]);
+                    int verticalUnit = Integer.parseInt(a[0]);
+                    String horizontalUnit = a[1];
+
+                    dataSet.addValue(verticalUnit, client.getName(), horizontalUnit);
                 } else {
                     //TODO: implement runtime exception
                 }
@@ -94,28 +81,14 @@ public class GraphData {
      * @param client The client whose data is changed.
      * @param newData The new data.
      */
-    public void setData(Client client, List<Integer[]> newData) {
-//        System.out.println("\nnewData:");
-//        for (Integer[] i : newData) {
-//            System.out.println(Arrays.toString(i));
-//        }
+    public void setData(Client client, List<String[]> newData) {
         for (Client c : dataMap.keySet()) {
             if (client.equals(c)) {
-
                 dataMap.put(c, newData);
-
-                // Print arrays to the console (test)
-//                System.out.println("\ndataMap contents:");
-//                for (Integer[] i : dataMap.get(c)) {
-//                    System.out.println(Arrays.toString(i));
-//                }
                 return;
             }
         }
         dataMap.put(client, newData);
     }
 
-    public Map<Client, List<Integer[]>> getDataMap() {
-        return dataMap;
-    }
 }

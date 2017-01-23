@@ -24,12 +24,12 @@ public class Group implements SessionOwner {
         this.sessions = new ArrayList<>();
     }
 
-    public boolean addSession(Session session) {
+    @Override
+    public void addSession(Session session) {
         for (Session s : sessions) {
-            if (session.equals(s)) return false;
+            if (session.equals(s)) return;
         }
         this.sessions.add(session);
-        return true;
     }
 
     /**

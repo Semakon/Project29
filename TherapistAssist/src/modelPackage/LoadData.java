@@ -4,7 +4,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -59,7 +62,7 @@ public class LoadData extends Thread {
 
         // Clear file
         try {
-            File file = new File(FILE_PATH);
+            File file = new File(FILE_PATH + FILE_NAME);
             PrintWriter writer = new PrintWriter(file);
             writer.print("");
             writer.close();
@@ -72,8 +75,8 @@ public class LoadData extends Thread {
      * Loads the client data from a file and returns it as a list of integer arrays.
      * @return The data from the watch of the client as a List of Integer arrays.
      */
-    public List<Integer[]> loadClientData() {
-        List<Integer[]> sessionData = new ArrayList<>();
+    public List<String[]> loadClientData() {
+        List<String[]> sessionData = new ArrayList<>();
         File file = new File(FILE_PATH + FILE_NAME);
         try {
             Scanner scanner = new Scanner(file);
@@ -88,10 +91,6 @@ public class LoadData extends Thread {
                 if (scanner.hasNext()) scanner.next();
             }
 
-            // Save the next int as start time
-            int startTime = 0;
-            if (scanner.hasNext()) startTime = Integer.parseInt(scanner.next());
-
             // Scan for data
             while (scanner.hasNext()) {
                 // Skip next 6 strings
@@ -100,9 +99,15 @@ public class LoadData extends Thread {
                 }
 
                 // Save data to array
-                Integer[] data = new Integer[2];
-                data[0] = Integer.parseInt(scanner.next());
-                data[1] = Integer.parseInt(scanner.next()) - startTime;
+                String[] data = new String[2];
+
+                // Heart rate
+                data[0] = scanner.next();
+
+                // Timestamp
+                Date date = new Date(Long.parseLong(scanner.next()));
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                data[1] = formatter.format(date);
 
                 // Add array to list of session data
                 sessionData.add(data);

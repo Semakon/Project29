@@ -33,12 +33,12 @@ public class Client implements Person, SessionOwner {
         this(cid, name, new PersonalInformation());
     }
 
-    public boolean addSession(Session session) {
+    @Override
+    public void addSession(Session session) {
         for (Session s : sessions) {
-            if (session.equals(s)) return false;
+            if (session.equals(s)) return;
         }
         this.sessions.add(session);
-        return true;
     }
 
     @Override

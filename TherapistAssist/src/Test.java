@@ -1,14 +1,9 @@
-import modelPackage.Client;
 import modelPackage.GraphData;
 import modelPackage.LoadData;
-import modelPackage.SessionOwner;
 import org.jfree.chart.ChartPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Author:  Martijn

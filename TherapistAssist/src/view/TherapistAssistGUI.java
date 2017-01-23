@@ -3,10 +3,15 @@ package view;
 import modelPackage.*;
 import org.jfree.chart.ChartPanel;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -346,7 +351,7 @@ public class TherapistAssistGUI extends Observable {
         JPanel sessionMenuPane = new JPanel(new FlowLayout());
         JPanel sessionPane = new JPanel(new FlowLayout());
 
-        JPanel graphPane = new JPanel();
+        JPanel graphPane = new JPanel(new BorderLayout());
         JPanel videoPane = new JPanel();
         JPanel notesPane = new JPanel();
 
@@ -413,8 +418,9 @@ public class TherapistAssistGUI extends Observable {
             // Update last added graph
             int size = sessionPanes.get(sessionOwner).getComponentCount();
             sessionPanes.get(sessionOwner).remove(size - 1);
-            sessionPanes.get(sessionOwner).add(session.getGraphData()
-                    .buildLineGraphPanel(sessionName));
+            JPanel temp = new JPanel(new BorderLayout());
+            temp.add(session.getGraphData().buildLineGraphPanel(sessionName), BorderLayout.CENTER);
+            sessionPanes.get(sessionOwner).add(temp);
 
         });
         backBtn.addActionListener(e -> {
@@ -449,7 +455,7 @@ public class TherapistAssistGUI extends Observable {
 
         // Add the line graph from the session to the graph pane
         ChartPanel chart = session.getGraphData().buildLineGraphPanel(sessionName);
-        graphPane.add(chart);
+        graphPane.add(chart, BorderLayout.CENTER);
         activePane = graphPane;
 
         // TODO: add correct functions to video pane
@@ -468,9 +474,11 @@ public class TherapistAssistGUI extends Observable {
             Client client = (Client)sessionOwner;
 
             // Add labels to participants pane
+            JLabel imgLbl = getImgLbl(client);
             JLabel clientNameLbl = new JLabel(client.getName());
             JLabel clientBirthDateLbl = new JLabel(client.getPI().getDateOfBirth());
 
+            participantsPane.add(imgLbl);
             participantsPane.add(clientNameLbl);
             participantsPane.add(clientBirthDateLbl);
         } else if (sessionOwner instanceof Group) {
@@ -483,7 +491,9 @@ public class TherapistAssistGUI extends Observable {
 
             // Add participants' names to participants pane
             for (Client c : group.getParticipants()) {
+                JLabel imgLbl = getImgLbl(c);
                 JLabel pLbl = new JLabel(c.getName());
+                participantsPane.add(imgLbl);
                 participantsPane.add(pLbl);
             }
         } else {
@@ -1276,7 +1286,9 @@ public class TherapistAssistGUI extends Observable {
         for (SessionOwner so : sessionPanes.keySet()) {
             if (sessionOwner.equals(so)) {
                 sessionPanes.get(so).add(lbl);
-                sessionPanes.get(so).add(graph);
+                JPanel temp = new JPanel(new BorderLayout());
+                temp.add(graph, BorderLayout.CENTER);
+                sessionPanes.get(so).add(temp);
                 break;
             }
         }
@@ -1295,6 +1307,27 @@ public class TherapistAssistGUI extends Observable {
         //TODO: implement good logout protocol
         setChanged();
         notifyObservers(GuiAction.logout);
+    }
+
+    /**
+     * Creates a JLabel that contains a picture of the given Client.
+     * @param client The Client whose picture is returned.
+     * @return a JLabel with the given Client's picture information.
+     */
+    private JLabel getImgLbl(Client client) {
+        try {
+            String imgPath = client.getPicturePath();
+            if (imgPath == null) return null;
+
+            URL url = getClass().getResource(imgPath);
+            BufferedImage img = ImageIO.read(new File(url.getPath()));
+            ImageIcon icon = new ImageIcon(img);
+
+            return new JLabel(icon);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
