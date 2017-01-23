@@ -33,17 +33,17 @@ public class GraphData {
         this.dataMap = new HashMap<>();
 
         // Create baseline using a fake client
-        Client fakeClient = new Client(-1, "Baseline");
+//        Client fakeClient = new Client(-1, "Baseline");
 
         // Create the list of data for the baseline
-        List<Integer[]> baseline = new ArrayList<>();
-        for (int i = 0; i <= MAX_SESSION_TIME; i++) {
-            Integer[] tempData = {BASELINE, i};
-            baseline.add(tempData);
-        }
+//        List<Integer[]> baseline = new ArrayList<>();
+//        for (int i = 0; i <= MAX_SESSION_TIME; i++) {
+//            Integer[] tempData = {BASELINE, i};
+//            baseline.add(tempData);
+//        }
 
         // Add the baseline data to the data map using the fake client as key
-        this.dataMap.put(fakeClient, baseline);
+//        this.dataMap.put(fakeClient, baseline);
     }
 
     /**

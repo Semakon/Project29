@@ -3,6 +3,7 @@ package modelPackage;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -53,6 +54,16 @@ public class LoadData extends Thread {
                 e.printStackTrace();
             }
         }
+
+        // Clear file
+        try {
+            File file = new File(FILE_PATH);
+            PrintWriter writer = new PrintWriter(file);
+            writer.print("");
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<Integer[]> loadClientData() {
@@ -62,8 +73,17 @@ public class LoadData extends Thread {
             Scanner scanner = new Scanner(file);
 
             // Skip first two lines
-            if (scanner.hasNextLine()) scanner.nextLine();
-            if (scanner.hasNextLine()) scanner.nextLine();
+            for (int i = 0; i < 30; i++) {
+                if (scanner.hasNextLine()) scanner.nextLine();
+            }
+
+            // Skip next 7 strings
+            for (int i = 1; i <= 7; i++) {
+                if (scanner.hasNext()) scanner.next();
+            }
+            // Save the next int as start time
+            int startTime = 0;
+            if (scanner.hasNext()) startTime = Integer.parseInt(scanner.next());
 
             // Scan for data
             while (scanner.hasNext()) {
@@ -75,7 +95,7 @@ public class LoadData extends Thread {
                 // Save data to array
                 Integer[] data = new Integer[2];
                 data[0] = Integer.parseInt(scanner.next());
-                data[1] = Integer.parseInt(scanner.next());
+                data[1] = Integer.parseInt(scanner.next()) - startTime;
 
                 // Add array to list of session data
                 sessionData.add(data);
