@@ -1,7 +1,5 @@
 package modelPackage;
 
-import org.jfree.chart.ChartPanel;
-
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,28 +17,25 @@ public class LoadData extends Thread {
 
     private boolean updateGraph;
     private SessionOwner sessionOwner;
-    private List<Integer[]> sessionData;
     private GraphData graphData;
-    private ChartPanel panel;
     private Container pane;
-    public static final String FILE_LOCATION = "/home/martijn/Documents/Mod6Project29/";
-    public static final String FILE_PREFIX = "client-";
+    public static final String FILE_PATH = "C:\\Users\\Martijn\\IdeaProjects\\" +
+            "Project29\\TherapistAssist\\src\\client-1";
 
-    public LoadData(SessionOwner sessionOwner, ChartPanel panel, Container pane) {
+    public LoadData(SessionOwner sessionOwner, Container pane) {
         this.sessionOwner = sessionOwner;
         this.graphData = new GraphData();
-        this.panel = panel;
         this.pane = pane;
-        this.sessionData = new ArrayList<>();
         this.updateGraph = true;
     }
 
     @Override
     public void run() {
         while(updateGraph) {
-            loadClientData();
-            graphData.setData((Client) sessionOwner, sessionData);
-            graphData.updatePanel(panel);
+            graphData.setData((Client) sessionOwner, loadClientData());
+            pane.removeAll();
+            pane.add(graphData.buildLineGraphPanel(((Client) sessionOwner).getName()));
+            pane.revalidate();
             pane.repaint();
             try {
                 Thread.sleep(2000);
@@ -50,22 +45,9 @@ public class LoadData extends Thread {
         }
     }
 
-    public void loadClientData() {
-        String fileName = FILE_PREFIX;
-        if (sessionOwner instanceof Client) {
-            fileName += ((Client) sessionOwner).getId();
-        } else if (sessionOwner instanceof Group) {
-            Group group = (Group)sessionOwner;
-            if (group.getParticipants().size() >= 1) {
-                fileName += group.getParticipants().get(0).getId();
-            } else {
-                System.out.println("Not supported");
-            }
-        } else {
-            System.out.println("Session owner should be client or group.");
-        }
-
-        File file = new File(FILE_LOCATION + fileName);
+    public List<Integer[]> loadClientData() {
+        List<Integer[]> sessionData = new ArrayList<>();
+        File file = new File(FILE_PATH);
         try {
             Scanner scanner = new Scanner(file);
 
@@ -91,24 +73,16 @@ public class LoadData extends Thread {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        return sessionData;
+    }
 
-        // Print arrays to the console (test)
-//        for (Integer[] i : sessionData) {
-//            System.out.println(Arrays.toString(i));
-//        }
+    public void setUpdateGraph(boolean updateGraph) {
+        this.updateGraph = updateGraph;
     }
 
     public boolean switchUpdateGraph() {
         this.updateGraph = !this.updateGraph;
         return this.updateGraph;
-    }
-
-    public boolean isUpdateGraph() {
-        return updateGraph;
-    }
-
-    public List<Integer[]> getSessionData() {
-        return sessionData;
     }
 
 }

@@ -19,32 +19,29 @@ public class Test {
     private Thread t1;
     private Thread t2;
     private GraphData graphData;
-    private ChartPanel panel;
-    private Container pane;
     private String switchBtnText;
 
     public Test(Container pane) {
-        this.pane = pane;
         this.graphData = new GraphData();
         this.switchBtnText = "Start";
-        buildGUI();
+        buildGUI(pane);
     }
 
     public void start() {
         SessionOwner sessionOwner = new Client(1, "Test client");
-        t1 = new LoadData(sessionOwner, panel, pane);
-        t2 = new DataAddTest();
+        t1 = new LoadData(sessionOwner, null); // TODO: fix null
+//        t2 = new DataAddTest();
         t1.start();
-        t2.start();
+//        t2.start();
     }
 
     public void switchUpdateGraph() {
         switchBtnText = ((LoadData) t1).switchUpdateGraph() ? "Stop" : "Start";
     }
 
-    public void buildGUI() {
+    public void buildGUI(Container pane) {
         pane.setLayout(new FlowLayout());
-        panel = graphData.buildLineGraphPanel("Test Graph");
+        ChartPanel panel = graphData.buildLineGraphPanel("Test Graph");
         JButton switchBtn = new JButton(switchBtnText);
         switchBtn.addActionListener(e -> {
             switchUpdateGraph();

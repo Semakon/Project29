@@ -8,6 +8,6 @@ package modelPackage;
  */
 public enum GuiAction {
 
-    addClient, addGroup, addSession, logout
+    addClient, addGroup, addSession, startSession, stopSession, logout
 
 }

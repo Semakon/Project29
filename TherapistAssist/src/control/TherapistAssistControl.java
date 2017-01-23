@@ -15,6 +15,9 @@ public class TherapistAssistControl implements Observer {
     private TherapistAssistGUI view;
     private TherapistAssist model;
 
+    private Thread t1;
+    private boolean threadActive;
+
     // Temporary
     private User user;
 
@@ -100,11 +103,26 @@ public class TherapistAssistControl implements Observer {
                     SessionOwner sessionOwner = view.getCurrentOwner();
                     Session session = model.startSession(user, sessionOwner);
 
-                    // TODO: add graph data to newly created session in real time (threads)
-//                    Thread t1 = new LoadData(sessionOwner);
-
                     // Send newly created session to the view
                     view.addSessionToView(session);
+                    return;
+                case startSession:
+                    if (threadActive) return;
+                    threadActive = true;
+                    // Add graph data to newly created session in real time (threads)
+                    t1 = new LoadData(view.getCurrentOwner(), view.getActivePane());
+                    t1.start();
+                    return;
+                case stopSession:
+                    if (!threadActive) return;
+                    // Stop updating graph by joining thread
+                    try {
+                        ((LoadData)t1).setUpdateGraph(false);
+                        t1.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    threadActive = false;
                     return;
                 case logout:
                     // TODO: implement good logout protocol

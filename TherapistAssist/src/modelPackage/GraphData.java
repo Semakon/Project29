@@ -95,28 +95,24 @@ public class GraphData {
      * @param newData The new data.
      */
     public void setData(Client client, List<Integer[]> newData) {
+        System.out.println("\nnewData:");
+        for (Integer[] i : newData) {
+            System.out.println(Arrays.toString(i));
+        }
         for (Client c : dataMap.keySet()) {
             if (client.equals(c)) {
+
                 dataMap.put(c, newData);
+
                 // Print arrays to the console (test)
-                for (Integer[] i : newData) {
+                System.out.println("\ndataMap contents:");
+                for (Integer[] i : dataMap.get(c)) {
                     System.out.println(Arrays.toString(i));
                 }
                 return;
             }
         }
         dataMap.put(client, newData);
-    }
-
-    public void addData(Client client, List<Integer[]> newData) {
-        for (Client c : dataMap.keySet()) {
-            if (client.equals(c)) {
-                List<Integer[]> data = dataMap.get(c);
-                data.addAll(newData);
-                dataMap.put(c, data);
-                return;
-            }
-        }
     }
 
     public Map<Client, List<Integer[]>> getDataMap() {
