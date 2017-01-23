@@ -87,19 +87,31 @@ public class TherapistAssistGUI extends Observable {
         // Set pane styles
         topPane.setPreferredSize(new Dimension(1000, 50));
         topPane.setBackground(Color.WHITE);
+        topPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         searchPane.setPreferredSize(new Dimension(1000, 50));
         searchPane.setBackground(Color.WHITE);
+        searchPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         dataPane.setPreferredSize(new Dimension(1000, 700));
         dataPane.setBackground(Color.WHITE);
+        dataPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         clientsPane.setPreferredSize(new Dimension(450, 550));
         clientsPane.setBackground(Color.WHITE);
+        clientsPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         clientsMenuPane.setPreferredSize(new Dimension(450, 50));
         clientsMenuPane.setBackground(Color.WHITE);
+        clientsMenuPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         groupsPane.setPreferredSize(new Dimension(450, 55));
         groupsPane.setBackground(Color.WHITE);
+        groupsPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         groupsMenuPane.setPreferredSize(new Dimension(450, 50));
         groupsMenuPane.setBackground(Color.WHITE);
+        groupsMenuPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
