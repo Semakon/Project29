@@ -99,35 +99,35 @@ public class LoadData extends Thread {
                 if (scanner.hasNext()) scanner.next();
             }
 
-            // Save the next int as start time
-            int startTime = 0;
-            if (scanner.hasNext()) startTime = Integer.parseInt(scanner.next());
-            System.out.println(startTime);
+            // Save the next long as start time
+            long startTime = 0;
+            if (scanner.hasNext()) startTime = Long.parseLong(scanner.next());
 
-            while (!dateFormatted.equals(measureTime) && scanner.hasNext()) {
+            System.out.println("\nStart time: " + startTime);
 
-                if(scanner.hasNext()) {
-                    scanner.next();
-                }
-                if(scanner.hasNext()) {
-                    measureTime = scanner.next();
-                }
-                measureTime = measureTime.substring(0, measureTime.length() - 7);
-
-
-
-                // Skip next 6 strings
-                for (int i = 1; i <= 6; i++) {
-                    if(scanner.hasNext()){
-                        if(scanner.hasNext()) {
-                            scanner.next();
-                        }
-                    }
-
-                }
-
-            }
-            measureTime = "";
+//            while (!dateFormatted.equals(measureTime) && scanner.hasNext()) {
+//
+//                if (scanner.hasNext()) {
+//                    scanner.next();
+//                }
+//                if (scanner.hasNext()) {
+//                    measureTime = scanner.next();
+//                }
+//                measureTime = measureTime.substring(0, measureTime.length() - 7);
+//
+//                // Skip next 6 strings
+//                for (int i = 1; i <= 6; i++) {
+//                    if (scanner.hasNext()){
+//                        scanner.next();
+//                    }
+//
+//                }
+//
+//                System.out.println("Measure Time: " + measureTime);
+//
+//            }
+//            System.out.println("I'VE GOT TO BREAK FREEEE");
+//            measureTime = "";
 
             // Scan for data
             while (scanner.hasNext()) {
@@ -144,7 +144,7 @@ public class LoadData extends Thread {
 
                 // Timestamp
                 Date date = new Date(Long.parseLong(scanner.next()));
-                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
                 data[1] = formatter.format(date);
 
                 // Add array to list of session data

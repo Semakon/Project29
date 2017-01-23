@@ -86,20 +86,20 @@ public class TherapistAssistGUI extends Observable {
 
         // Set pane styles
         topPane.setPreferredSize(new Dimension(1000, 50));
-        topPane.setBackground(Color.LIGHT_GRAY);
+        topPane.setBackground(Color.WHITE);
         searchPane.setPreferredSize(new Dimension(1000, 50));
-        searchPane.setBackground(Color.LIGHT_GRAY);
+        searchPane.setBackground(Color.WHITE);
         dataPane.setPreferredSize(new Dimension(1000, 700));
-        dataPane.setBackground(Color.LIGHT_GRAY);
+        dataPane.setBackground(Color.WHITE);
 
         clientsPane.setPreferredSize(new Dimension(450, 550));
-        clientsPane.setBackground(Color.LIGHT_GRAY);
+        clientsPane.setBackground(Color.WHITE);
         clientsMenuPane.setPreferredSize(new Dimension(450, 50));
-        clientsMenuPane.setBackground(Color.LIGHT_GRAY);
+        clientsMenuPane.setBackground(Color.WHITE);
         groupsPane.setPreferredSize(new Dimension(450, 55));
-        groupsPane.setBackground(Color.LIGHT_GRAY);
+        groupsPane.setBackground(Color.WHITE);
         groupsMenuPane.setPreferredSize(new Dimension(450, 50));
-        groupsMenuPane.setBackground(Color.LIGHT_GRAY);
+        groupsMenuPane.setBackground(Color.WHITE);
 
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
@@ -195,16 +195,24 @@ public class TherapistAssistGUI extends Observable {
 
         // Set pane styles
         participantsPane.setPreferredSize(new Dimension(250, 800));
-        participantsPane.setBackground(Color.LIGHT_GRAY);
+        participantsPane.setBackground(Color.WHITE);
+        participantsPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         dataPane.setPreferredSize(new Dimension(740, 800));
-        dataPane.setBackground(Color.LIGHT_GRAY);
+        dataPane.setBackground(Color.WHITE);
+        dataPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         topPane.setPreferredSize(new Dimension(740, 50));
-        topPane.setBackground(Color.LIGHT_GRAY);
+        topPane.setBackground(Color.WHITE);
+        topPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         sessionsMenuPane.setPreferredSize(new Dimension(740, 50));
-        sessionsMenuPane.setBackground(Color.LIGHT_GRAY);
+        sessionsMenuPane.setBackground(Color.WHITE);
+        sessionsMenuPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         sessionsPane.setPreferredSize(new Dimension(740, 700));
-        sessionsPane.setBackground(Color.LIGHT_GRAY);
+        sessionsPane.setBackground(Color.WHITE);
+        sessionsPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
@@ -357,23 +365,34 @@ public class TherapistAssistGUI extends Observable {
 
         // Set pane styles
         participantsPane.setPreferredSize(new Dimension(250, 800));
-        participantsPane.setBackground(Color.LIGHT_GRAY);
+        participantsPane.setBackground(Color.WHITE);
+        participantsPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         dataPane.setPreferredSize(new Dimension(740, 800));
-        dataPane.setBackground(Color.LIGHT_GRAY);
+        dataPane.setBackground(Color.WHITE);
+
         topPane.setPreferredSize(new Dimension(740, 50));
-        topPane.setBackground(Color.LIGHT_GRAY);
+        topPane.setBackground(Color.WHITE);
+        topPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         sessionMenuPane.setPreferredSize(new Dimension(740, 50));
-        sessionMenuPane.setBackground(Color.LIGHT_GRAY);
+        sessionMenuPane.setBackground(Color.WHITE);
+        sessionMenuPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         sessionPane.setPreferredSize(new Dimension(740, 700));
-        sessionPane.setBackground(Color.LIGHT_GRAY);
+        sessionPane.setBackground(Color.WHITE);
 
         graphPane.setPreferredSize(new Dimension(740, 380));
-        graphPane.setBackground(Color.GRAY);
+        graphPane.setBackground(Color.WHITE);
+        graphPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         videoPane.setPreferredSize(new Dimension(365, 310));
-        videoPane.setBackground(Color.GRAY);
+        videoPane.setBackground(Color.WHITE);
+        videoPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
         notesPane.setPreferredSize(new Dimension(365, 310));
-        notesPane.setBackground(Color.GRAY);
+        notesPane.setBackground(Color.WHITE);
+        notesPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
@@ -533,14 +552,14 @@ public class TherapistAssistGUI extends Observable {
 
         // Set pane styles
         topPane.setPreferredSize(new Dimension(1000, 50));
-        topPane.setBackground(Color.LIGHT_GRAY);
+        topPane.setBackground(Color.WHITE);
         dataPane.setPreferredSize(new Dimension(1000, 750));
-        dataPane.setBackground(Color.LIGHT_GRAY);
+        dataPane.setBackground(Color.WHITE);
 
         groupsPane.setPreferredSize(new Dimension(1000, 700));
-        groupsPane.setBackground(Color.LIGHT_GRAY);
+        groupsPane.setBackground(Color.WHITE);
         groupsMenuPane.setPreferredSize(new Dimension(1000, 50));
-        groupsMenuPane.setBackground(Color.LIGHT_GRAY);
+        groupsMenuPane.setBackground(Color.WHITE);
 
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
@@ -639,14 +658,14 @@ public class TherapistAssistGUI extends Observable {
 
         // Set pane styles
         topPane.setPreferredSize(new Dimension(1000, 50));
-        topPane.setBackground(Color.LIGHT_GRAY);
+        topPane.setBackground(Color.WHITE);
         dataPane.setPreferredSize(new Dimension(1000, 750));
-        dataPane.setBackground(Color.LIGHT_GRAY);
+        dataPane.setBackground(Color.WHITE);
 
         clientsPane.setPreferredSize(new Dimension(1000, 700));
-        clientsPane.setBackground(Color.LIGHT_GRAY);
+        clientsPane.setBackground(Color.WHITE);
         clientsMenuPane.setPreferredSize(new Dimension(1000, 50));
-        clientsMenuPane.setBackground(Color.LIGHT_GRAY);
+        clientsMenuPane.setBackground(Color.WHITE);
 
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
@@ -771,14 +790,14 @@ public class TherapistAssistGUI extends Observable {
 
         // Set pane styles
         topPane.setPreferredSize(new Dimension(1000, 50));
-        topPane.setBackground(Color.LIGHT_GRAY);
+        topPane.setBackground(Color.WHITE);
         dataPane.setPreferredSize(new Dimension(1000, 750));
-        dataPane.setBackground(Color.LIGHT_GRAY);
+        dataPane.setBackground(Color.WHITE);
 
         clientsPane.setPreferredSize(new Dimension(1000, 700));
-        clientsPane.setBackground(Color.LIGHT_GRAY);
+        clientsPane.setBackground(Color.WHITE);
         clientsMenuPane.setPreferredSize(new Dimension(1000, 50));
-        clientsMenuPane.setBackground(Color.LIGHT_GRAY);
+        clientsMenuPane.setBackground(Color.WHITE);
 
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
@@ -921,14 +940,14 @@ public class TherapistAssistGUI extends Observable {
 
         // Set pane styles
         topPane.setPreferredSize(new Dimension(1000, 50));
-        topPane.setBackground(Color.LIGHT_GRAY);
+        topPane.setBackground(Color.WHITE);
         dataPane.setPreferredSize(new Dimension(1000, 750));
-        dataPane.setBackground(Color.LIGHT_GRAY);
+        dataPane.setBackground(Color.WHITE);
 
         groupsPane.setPreferredSize(new Dimension(1000, 700));
-        groupsPane.setBackground(Color.LIGHT_GRAY);
+        groupsPane.setBackground(Color.WHITE);
         groupsMenuPane.setPreferredSize(new Dimension(1000, 50));
-        groupsMenuPane.setBackground(Color.LIGHT_GRAY);
+        groupsMenuPane.setBackground(Color.WHITE);
 
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);

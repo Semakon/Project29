@@ -64,10 +64,12 @@ public class GraphData {
             List<String[]> list = dataMap.get(client);
             for (String[] a : list) {
                 if (a.length == 2) {
-                    int verticalUnit = Integer.parseInt(a[0]);
-                    String horizontalUnit = a[1];
+                    Integer verticalUnit = Integer.parseInt(a[0]);
 
-                    dataSet.addValue(verticalUnit, client.getName(), horizontalUnit);
+                    String temp = a[1].replace(":", "");
+                    Integer horizontalUnit = Integer.parseInt(temp);
+
+                    dataSet.setValue(verticalUnit, client.getName(), horizontalUnit);
                 } else {
                     //TODO: implement runtime exception
                 }

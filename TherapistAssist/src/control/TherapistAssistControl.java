@@ -239,13 +239,13 @@ public class TherapistAssistControl implements Observer {
 
     }
 
-    private List<Integer[]> generateRandomData(int values) {
-        List<Integer[]> randomData = new ArrayList<>();
+    private List<String[]> generateRandomData(int values) {
+        List<String[]> randomData = new ArrayList<>();
 
         for (int i = 0; i <= values; i++) {
             Random rand = new Random();
             int value = rand.nextInt((90 - 60) + 1) + 60;
-            Integer[] data = {value, i};
+            String[] data = {value + "", "" + i};
             randomData.add(data);
         }
 
