@@ -109,7 +109,6 @@ public class GraphData {
         }
 
         // Add a baseline to compare the heart rate with
-        System.out.println("Min: " + min + "\nMax: " + max);
         addBaseline(dataSet, 65, min, max);
 
         return dataSet;

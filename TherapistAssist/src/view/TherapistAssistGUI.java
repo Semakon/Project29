@@ -609,6 +609,8 @@ public class TherapistAssistGUI extends Observable {
         groupsMenuPane.setPreferredSize(new Dimension(1000, 50));
         groupsMenuPane.setBackground(Color.WHITE);
 
+        participantsPane.setBackground(Color.WHITE);
+
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
         JLabel groupProfileLbl = new JLabel("Group profile");
@@ -655,10 +657,11 @@ public class TherapistAssistGUI extends Observable {
                 // Set group to be archived
                 archiveGroup = group;
 
-                // notify observers (controller)
+                // Notify observers (controller)
                 setChanged();
                 notifyObservers(GuiAction.archiveGroup);
 
+                // Show user profile card
                 CardLayout cl = (CardLayout) (cards.getLayout());
                 cl.show(cards, USER_PROFILE_CARD);
             }
@@ -793,8 +796,22 @@ public class TherapistAssistGUI extends Observable {
             //TODO: implement save functionality
             JOptionPane.showMessageDialog(null, "Save dialog.");
         });
-        archiveClientBtn.addActionListener(e ->
-                JOptionPane.showMessageDialog(null, "Archive Client dialog."));
+        archiveClientBtn.addActionListener(e -> {
+            int response = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to archive this client? This cannot be undone!");
+            if (response == JOptionPane.OK_OPTION) {
+                // Set client to be archived
+                archiveClient = client;
+
+                // Notify observers (controller)
+                setChanged();
+                notifyObservers(GuiAction.archiveClient);
+
+                // Show user profile card
+                CardLayout cl = (CardLayout) (cards.getLayout());
+                cl.show(cards, USER_PROFILE_CARD);
+            }
+        });
         backBtn.addActionListener(e -> {
             // Reset text field values
             nameTF.setText(client.getName());
@@ -1039,6 +1056,8 @@ public class TherapistAssistGUI extends Observable {
         groupsMenuPane.setPreferredSize(new Dimension(1000, 50));
         groupsMenuPane.setBackground(Color.WHITE);
 
+        participantsPane.setBackground(Color.WHITE);
+
         // Create labels
         JLabel userNameLbl = new JLabel(this.userName);
         JLabel groupProfileLbl = new JLabel("Group profile");
@@ -1254,6 +1273,7 @@ public class TherapistAssistGUI extends Observable {
 
         // Create new label
         JLabel lbl = new JLabel(client.getPI().getInitials());
+        lbl.setName(CLIENT_LBL_PREFIX + cid);
         this.clientsPane.add(lbl);
 
         // Add mouse listener to the label
@@ -1293,7 +1313,24 @@ public class TherapistAssistGUI extends Observable {
     }
 
     public void archiveClient(Client client) {
-        // TODO: implement
+        int cid = client.getId();
+        // Remove label in user profile
+        for (Component c : clientsPane.getComponents()) {
+            if (c instanceof JLabel && c.getName().equals(CLIENT_LBL_PREFIX + cid)) {
+                clientsPane.remove(c);
+                break;
+            }
+        }
+
+        // TODO: Remove client from groups in the view
+
+        // Remove client from client list
+        for (Client c : clients) {
+            if (c.equals(client)) {
+                clients.remove(c);
+                break;
+            }
+        }
     }
 
     /**
@@ -1363,9 +1400,8 @@ public class TherapistAssistGUI extends Observable {
 
     public void archiveGroup(Group group) {
         int gid = group.getGid();
-        CardLayout cl = (CardLayout) (cards.getLayout());
 
-        // remove label in user profile
+        // Remove label in user profile
         for (Component c : groupsPane.getComponents()) {
             if (c instanceof JLabel && c.getName().equals(GROUP_LBL_PREFIX + gid)) {
                 groupsPane.remove(c);
@@ -1375,10 +1411,11 @@ public class TherapistAssistGUI extends Observable {
 
         //TODO: find a way to remove associated cards
 
-        // remove group from groups list
+        // Remove group from group list
         for (Group g : groups) {
             if (group.equals(g)) {
                 groups.remove(g);
+                break;
             }
         }
     }

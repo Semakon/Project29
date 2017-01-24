@@ -80,6 +80,14 @@ public class User implements Person {
         for (Client c : clients) {
             if (c.equals(client)) {
                 archive.archiveClient(c);
+
+                // Remove client from any groups its a part of
+                for (Group g : groups) {
+                    if (g.isInGroup(c)) {
+                        g.removeClient(c);
+                    }
+                }
+
                 clients.remove(c);
                 return true;
             }
@@ -122,7 +130,7 @@ public class User implements Person {
     }
 
     public Session startSession(SessionOwner sessionOwner) {
-        Session session = new Session(++sidCounter, this, sessionOwner);
+        Session session = new Session(++sidCounter, sessionOwner);
         sessions.add(session);
         sessionOwner.addSession(session);
         return session;

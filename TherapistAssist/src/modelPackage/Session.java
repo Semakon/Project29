@@ -17,9 +17,6 @@ public class Session {
     /** The session's name. */
     private String name;
 
-    /** The User (therapist) of the session. */
-    private User therapist; //TODO: find out: necessary?
-
     /** The Session's participating session owner. */
     private SessionOwner owner;
     /** The date the session happened. */
@@ -27,11 +24,10 @@ public class Session {
     /** The session's graph data. */
     private GraphData graphData;
 
-    public Session(int id, User therapist, SessionOwner sessionOwner) {
+    public Session(int id, SessionOwner sessionOwner) {
         this.id = id;
         this.owner = sessionOwner;
         this.name = "Session " + (owner.getSessions().size() + 1);
-        this. therapist = therapist;
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date date = new Date();
@@ -54,10 +50,6 @@ public class Session {
 
     public int getId() {
         return id;
-    }
-
-    public User getTherapist() {
-        return therapist;
     }
 
     public String getDate() {
