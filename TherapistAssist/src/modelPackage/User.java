@@ -72,13 +72,13 @@ public class User implements Person {
 
     /**
      * Archives a Client with the given Client ID.
-     * @param cid The Client ID of the Client to be archived.
+     * @param client The Client to be archived.
      * @return true if the client was archived successfully, false if the client is not in the
      * client list.
      */
-    public boolean archiveClient(int cid) {
+    public boolean archiveClient(Client client) {
         for (Client c : clients) {
-            if (c.getId() == cid) {
+            if (c.equals(client)) {
                 archive.archiveClient(c);
                 clients.remove(c);
                 return true;
@@ -106,13 +106,13 @@ public class User implements Person {
 
     /**
      * Archives a Group with the given Group ID.
-     * @param gid The Group ID of the Group to be archived.
+     * @param group The Group to be archived.
      * @return true if the group was archived successfully, false if the group is not in the
      * group list.
      */
-    public boolean archiveGroup(int gid) {
+    public boolean archiveGroup(Group group) {
         for (Group g : groups) {
-            if (g.getGid() == gid) {
+            if (g.equals(group)) {
                 archive.archiveGroup(g);
                 groups.remove(g);
                 return true;

@@ -1,5 +1,15 @@
 package modelPackage;
 
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeriesCollection;
+import view.CoordinatesChartMouseListener;
+
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,6 +53,7 @@ public class LoadData extends Thread {
 
     @Override
     public void run() {
+        // Get the client whose chart is updated
         Client client = null;
         if (session.getOwner() instanceof Group) {
             Group group = (Group)session.getOwner();
@@ -54,13 +65,34 @@ public class LoadData extends Thread {
         } else {
             client = ((Client)session.getOwner());
         }
+
+        // Create JLabel to show the coordinates
+        JLabel coordsLbl = new JLabel();
+
+        // Get the session's GraphData
         GraphData graphData = session.getGraphData();
         while(updateGraph) {
+            // Update GraphData with newly loaded data from file
             graphData.setData(client, loadClientData());
+
+            // Update the dataset of the chart
+            graphData.updateChart();
+
+            // Reset the container pane
             pane.removeAll();
-            pane.add(graphData.buildLineGraphPanel((session.getName())));
+
+            // Recreate the chart panel and add it to the container pane
+            ChartPanel panel = graphData.buildLineGraphPanel(session.getName());
+            panel.addChartMouseListener(new CoordinatesChartMouseListener(coordsLbl));
+
+            pane.add(coordsLbl, BorderLayout.NORTH);
+            pane.add(panel, BorderLayout.CENTER);
+
+            // Revalidate and repaint the pane containing the chart panel
             pane.revalidate();
             pane.repaint();
+
+            // Sleep for 2 seconds
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {

@@ -5,7 +5,12 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import java.util.*;
 
@@ -20,10 +25,11 @@ public class GraphData {
     /** Map of client to data (array: {Vertical unit, Horizontal unit}). */
     private Map<Client, List<String[]>> dataMap;
     /** Vertical unit display. */
-    public static final String VERTICAL_UNIT = "Stress level";
+    public static final String VERTICAL_UNIT = "Heart Rate";
     /** Horizontal unit display. */
-    public static final String HORIZONTAL_UNIT = "Time (Minutes)";
-    /** Baseline of horizontal unit. */
+    public static final String HORIZONTAL_UNIT = "Time";
+    /**  */
+    private ChartPanel chartPanel;
 
 
     public GraphData() {
@@ -36,44 +42,62 @@ public class GraphData {
      */
     public ChartPanel buildLineGraphPanel(String chartTitle) {
         // Create a line chart
-        JFreeChart lineChart = ChartFactory.createLineChart(
+        JFreeChart lineChart = ChartFactory.createXYLineChart(
                 chartTitle,
                 HORIZONTAL_UNIT,
                 VERTICAL_UNIT,
                 createDataSet(),
                 PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
+                true, // showLegend
+                true, // createTooltip
+                false // createURL
         );
 
-        CategoryPlot plot = (CategoryPlot) lineChart.getPlot();
-        plot.getRangeAxis().setRange(50, 120);
+        // Set the chart's range
+        XYPlot plot = lineChart.getXYPlot();
+        plot.getRangeAxis().setRange(50, 130);
+        plot.setRangeZeroBaselineVisible(false);
 
-        return new ChartPanel(lineChart);
+        chartPanel = new ChartPanel(lineChart);
+        return chartPanel;
+    }
+
+    /**
+     * Updates the chart by recreating the dataset. The data map should be updated before doing this
+     * or it will have no effect.
+     */
+    public void updateChart() {
+        chartPanel.getChart().getXYPlot().setDataset(createDataSet());
     }
 
     /**
      * Creates a data set with this object's data and returns it.
      * @return a data set created with this object's data.
      */
-    private DefaultCategoryDataset createDataSet() {
-        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+    private XYDataset createDataSet() {
+        XYSeriesCollection dataSet = new XYSeriesCollection();
 
+        // Create an XYSeries for every client in the data map
         for (Client client : dataMap.keySet()) {
+            XYSeries xySeries = new XYSeries(client.getName());
             List<String[]> list = dataMap.get(client);
+
+            // Add the data to the series
             for (String[] a : list) {
                 if (a.length == 2) {
-                    Integer verticalUnit = Integer.parseInt(a[0]);
+                    Integer y = Integer.parseInt(a[0]);
 
                     String temp = a[1].replace(":", "");
-                    Integer horizontalUnit = Integer.parseInt(temp);
+                    Integer x = Integer.parseInt(temp);
 
-                    dataSet.setValue(verticalUnit, client.getName(), horizontalUnit);
+                    xySeries.add(x, y);
                 } else {
                     //TODO: implement runtime exception
                 }
             }
+
+            // Add the series to the dataset
+            dataSet.addSeries(xySeries);
         }
         return dataSet;
     }

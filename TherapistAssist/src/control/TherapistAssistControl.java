@@ -72,6 +72,14 @@ public class TherapistAssistControl implements Observer {
                     // Send newly created client to the view
                     view.addClientToView(client);
                     return;
+                case archiveClient:
+                    // Archive client in the model
+                    Client archiveClient = view.getArchiveClient();
+                    model.archiveClient(user, archiveClient);
+
+                    // Archive client in the view
+                    view.archiveClient(archiveClient);
+                    return;
                 case addGroup:
                     // Create Group and add it to the database
                     Group group = model.addGroup(user);
@@ -97,6 +105,14 @@ public class TherapistAssistControl implements Observer {
 
                     // Send newly created group to the view
                     view.addGroupToView(group);
+                    return;
+                case archiveGroup:
+                    // Archive group in the model
+                    Group archiveGroup = view.getArchiveGroup();
+                    model.archiveGroup(user, archiveGroup);
+
+                    // Archive group in the view
+                    view.archiveGroup(archiveGroup);
                     return;
                 case addSession:
                     // Create SessionOwner and start a new session

@@ -19,15 +19,12 @@ public class TherapistAssist {
     private List<User> users;
     /** User ID Counter; for generating new User IDs. */
     private int uidCounter;
-    /** Session ID counter; for generating new Session IDs. */
-    private int sidCounter;
     /** Map of removed User IDs to their respective archives. */
     private Map<Integer, Archive> removedUsersArchives;
 
     public TherapistAssist() {
         this.users = new ArrayList<>();
         uidCounter = 0;
-        sidCounter = 0;
         removedUsersArchives = new HashMap<>();
     }
 
@@ -91,16 +88,16 @@ public class TherapistAssist {
     }
 
     /**
-     * Archives the Client of the current User with the given Client ID.
+     * Archives the given Client of the current User.
      * @param currentUser Currently online User.
-     * @param cid Client ID of Client to be archived.
-     * @return true if Client was archived successfully, false if the currentUser or the Client do
+     * @param client Client to be archived.
+     * @return true if Client was archived successfully, false if the currentUser or the Client does
      * not exist.
      */
-    public boolean archiveClient(User currentUser, int cid) {
+    public boolean archiveClient(User currentUser, Client client) {
         for (User u : users) {
             if (currentUser.equals(u)) {
-                return currentUser.archiveClient(cid);
+                return u.archiveClient(client);
             }
         }
         return false;
@@ -120,8 +117,19 @@ public class TherapistAssist {
         return null;
     }
 
-    public boolean archiveGroup(User currentUser, int gid) {
-
+    /**
+     * Archives the given Group of the current user.
+     * @param currentUser Currently online user.
+     * @param group Group to be archived
+     * @return true if Group was archived successfully, false if the currentUser or the Group does
+     * not exist.
+     */
+    public boolean archiveGroup(User currentUser, Group group) {
+        for (User u : users) {
+            if (currentUser.equals(u)) {
+                return u.archiveGroup(group);
+            }
+        }
         return false;
     }
 
