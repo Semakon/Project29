@@ -1264,6 +1264,14 @@ public class TherapistAssistGUI extends Observable {
                 CardLayout cl = (CardLayout) (cards.getLayout());
                 cl.show(cards, CLIENT_SESSIONS_OVERVIEW_CARD + cid);
             }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                lbl.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
         });
 
         // If this is called because the user clicked on "Add Client"
@@ -1330,6 +1338,14 @@ public class TherapistAssistGUI extends Observable {
                 // To group sessions
                 CardLayout cl = (CardLayout) (cards.getLayout());
                 cl.show(cards, GROUP_SESSIONS_OVERVIEW_CARD + gid);
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                lbl.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
 
@@ -1418,6 +1434,14 @@ public class TherapistAssistGUI extends Observable {
 
                 cl.show(cards, cardId + id);
             }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                lbl.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
         });
 
         // Add label and graph to the session pane of the session owner
@@ -1453,10 +1477,6 @@ public class TherapistAssistGUI extends Observable {
         for (JComponent c : cs) {
             c.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         }
-    }
-
-    private JLabel getImgLbl(Client client) {
-        return getImgLbl(client, null);
     }
 
     /**

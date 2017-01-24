@@ -77,6 +77,9 @@ public class GraphData {
     private XYDataset createDataSet() {
         XYSeriesCollection dataSet = new XYSeriesCollection();
 
+        long min = 0;
+        long max = 0;
+
         // Create an XYSeries for every client in the data map
         for (Client client : dataMap.keySet()) {
             XYSeries xySeries = new XYSeries(client.getName());
@@ -91,6 +94,11 @@ public class GraphData {
                     Integer x = Integer.parseInt(temp);
 
                     xySeries.add(x, y);
+
+                    // Set recalculate min and max for baseline
+                    if (min == 0) min = x;
+                    min = min < x ? min : x;
+                    max = max > x ? max : x;
                 } else {
                     //TODO: implement runtime exception
                 }
@@ -99,7 +107,27 @@ public class GraphData {
             // Add the series to the dataset
             dataSet.addSeries(xySeries);
         }
+
+        // Add a baseline to compare the heart rate with
+        System.out.println("Min: " + min + "\nMax: " + max);
+        addBaseline(dataSet, 65, min, max);
+
         return dataSet;
+    }
+
+    /**
+     * Adds a baseline to the dataset
+     * @param dataset The baseline is added to this dataset.
+     * @param baseline This is the added baseline.
+     * @param min The minimum value of X.
+     * @param max The maximum value of X.
+     */
+    private void addBaseline(XYSeriesCollection dataset, int baseline, long min, long max) {
+        XYSeries xySeries = new XYSeries("Baseline");
+        for (long i = min; i <= max; i++) {
+            xySeries.add(i, baseline);
+        }
+        dataset.addSeries(xySeries);
     }
 
     /**
